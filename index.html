@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Developer Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            opacity: 0.15;
+        }
+
+        .game-character {
+            position: absolute;
+            font-size: 60px;
+            animation: floatCharacter 20s infinite ease-in-out;
+            filter: drop-shadow(0 0 20px currentColor);
+        }
+
+        @keyframes floatCharacter {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(150px, -150px) rotate(90deg); }
+            50% { transform: translate(300px, 100px) rotate(180deg); }
+            75% { transform: translate(100px, 200px) rotate(270deg); }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: rgba(78, 205, 196, 0.8);
+            border-radius: 50%;
+            animation: float 10s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(78, 205, 196, 0.6);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            padding: 80px 20px 40px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            border-bottom: 2px solid rgba(78, 205, 196, 0.3);
+        }
+
+        .profile-section {
+            margin-bottom: 30px;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid #4ecdc4;
+            margin: 0 auto 20px;
+            display: block;
+            box-shadow: 0 0 30px rgba(78, 205, 196, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(78, 205, 196, 0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(78, 205, 196, 0.8); }
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #ff6b6b);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            color: #b8b8b8;
+            margin-top: 10px;
+        }
+
+        .contact-section {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: rgba(78, 205, 196, 0.1);
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            border-radius: 25px;
+            text-decoration: none;
+            color: #4ecdc4;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-item::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(78, 205, 196, 0.4) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+
+        .contact-item:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .contact-item:hover {
+            background: rgba(78, 205, 196, 0.2);
+            border-color: #4ecdc4;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(78, 205, 196, 0.4);
+        }
+
+        .contact-item .icon {
+            transition: transform 0.3s ease;
+        }
+
+        .contact-item:hover .icon {
+            transform: rotate(360deg) scale(1.2);
+        }
+
+        .icon {
+            font-size: 1.3em;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .game-card {
+            background: linear-gradient(145deg, rgba(30, 30, 50, 0.8), rgba(20, 20, 35, 0.9));
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(78, 205, 196, 0.2);
+            transition: all 0.4s ease;
+            animation: fadeInUp 0.8s ease backwards;
+            position: relative;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #4ecdc4, #45b7d1);
+            border-radius: 20px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .game-card:hover::before {
+            opacity: 0.3;
+        }
+
+        .game-card:nth-child(1) { animation-delay: 0.1s; }
+        .game-card:nth-child(2) { animation-delay: 0.2s; }
+        .game-card:nth-child(3) { animation-delay: 0.3s; }
+        .game-card:nth-child(4) { animation-delay: 0.4s; }
+        .game-card:nth-child(5) { animation-delay: 0.5s; }
+        .game-card:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .game-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(78, 205, 196, 0.3);
+        }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .game-card:hover .image-container img {
+            transform: scale(1.1);
+        }
+
+        .game-info {
+            padding: 25px;
+        }
+
+        .game-title {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            display: inline-block;
+            cursor: default;
+        }
+
+        .game-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #4ecdc4, #45b7d1);
+            transition: width 0.4s ease;
+        }
+
+        .game-card:hover .game-title::after {
+            width: 100%;
+        }
+
+        .game-description {
+            color: #d0d0d0;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+
+        .game-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            background: rgba(255, 107, 107, 0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            border: 1px solid rgba(255, 107, 107, 0.4);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tag:hover {
+            background: rgba(255, 107, 107, 0.3);
+            transform: scale(1.1) rotate(-2deg);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .game-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: stretch;
+        }
+
+        .action-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+            cursor: pointer;
+            border: none;
+            min-height: 48px;
+        }
+
+        .play-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            flex: 1;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .play-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .play-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .play-button:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+            animation: buttonPulse 0.8s ease-in-out;
+        }
+
+        @keyframes buttonPulse {
+            0%, 100% { transform: scale(1.05) translateY(-2px); }
+            50% { transform: scale(1.08) translateY(-3px); }
+        }
+
+        .watch-button {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+            flex: 1;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .watch-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .watch-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .watch-button:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+            animation: buttonPulse 0.8s ease-in-out;
+        }
+
+        .github-button {
+            background: rgba(78, 205, 196, 0.15);
+            color: #4ecdc4;
+            border: 2px solid #4ecdc4;
+            flex: 1;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .github-button::after {
+            content: '→';
+            position: absolute;
+            right: -20px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            font-size: 1.2em;
+        }
+
+        .github-button:hover::after {
+            right: 15px;
+            opacity: 1;
+        }
+
+        .github-button:hover {
+            background: rgba(78, 205, 196, 0.25);
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
+            padding-right: 35px;
+        }
+
+        /* Video Modal */
+        .video-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .video-modal.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .video-modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 800px;
+            background: linear-gradient(145deg, rgba(30, 30, 50, 0.98), rgba(20, 20, 35, 0.98));
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid rgba(78, 205, 196, 0.4);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 2em;
+            color: #4ecdc4;
+            cursor: pointer;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(78, 205, 196, 0.15);
+            transition: all 0.3s ease;
+            z-index: 10;
+            font-weight: bold;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 107, 107, 0.3);
+            color: #ff6b6b;
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-container video {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-height: 70vh;
+        }
+
+        .modal-title {
+            font-size: 1.8em;
+            background: linear-gradient(90deg, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px 20px 40px;
+            margin-top: 80px;
+            background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.5));
+            border-top: 2px solid rgba(78, 205, 196, 0.3);
+        }
+
+        .footer-text {
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .contact-item {
+                justify-content: center;
+            }
+
+            .image-container {
+                height: 200px;
+            }
+
+            .video-modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .modal-title {
+                font-size: 1.4em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <div class="background-animation" id="backgroundAnimation"></div>
+
+    <!-- Video Modal -->
+    <div class="video-modal" id="videoModal">
+        <div class="video-modal-content">
+            <span class="close-modal" onclick="closeVideoModal()">×</span>
+            <h3 class="modal-title" id="modalTitle">Oyun Videosu</h3>
+            <div class="video-container">
+                <video id="videoPlayer" controls>
+                    <source id="videoSource" src="" type="video/mp4">
+                    Tarayıcınız video etiketini desteklemiyor.
+                </video>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <header>
+            <div class="profile-section">
+                <img src="My Photo.jpg" alt="Profile" class="profile-img">
+                <h1>🎮 Game Developer Portfolio</h1>
+                <p class="subtitle">Mobil Oyun Dünyalarında Tutkulu Bir Geliştirici</p>
+            </div>
+
+            <div class="contact-section">
+                <a href="mailto:efrknsngl@gmail.com" class="contact-item">
+                    <span class="icon">📧</span>
+                    <span>Email</span>
+                </a>
+                <a href="https://github.com/eFurkanSngl?tab=repositories" target="_blank" class="contact-item">
+                    <span class="icon">💻</span>
+                    <span>GitHub</span>
+                </a>
+                <a href="https://www.linkedin.com/in/efurkansengull/" target="_blank" class="contact-item">
+                    <span class="icon">💼</span>
+                    <span>LinkedIn</span>
+                </a>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="games-grid">
+                <!-- Oyun 1 -->
+                <div class="game-card">
+                    <div class="image-container">
+                        <img src="RoyalMatch.png" alt="Royal Match Clone">
+                    </div>
+                    <div class="game-info">
+                        <h2 class="game-title">👑 Royal Match Clone</h2>
+                        <p class="game-description">
+                            Kraliyet temalı match-3 puzzle oyunu. Renkli taşları eşleştirerek odaları yenileyin, kombinasyonlar yaparak güçlü roketler ve bombalar oluşturun. Her seviyede farklı hedefler ve engellerle dolu stratejik bir deneyim.
+                        </p>
+                        <div class="game-tags">
+                            <span class="tag">Unity</span>
+                            <span class="tag">C#</span>
+                            <span class="tag">Match-3</span>
+                            <span class="tag">Puzzle</span>
+                            <span class="tag">Casual</span>
+                        </div>
+                        <div class="game-actions">
+                            <button class="action-button watch-button" onclick="openVideoModal('Royal Match Clone', 'royal-match-video.mp4')">
+                                <span>📹</span>
+                                <span>Videoyu İzle</span>
+                            </button>
+                            <a href="https://github.com/eFurkanSngl/Royal-Match-Clone" target="_blank" class="action-button github-button">
+                                <span>📁</span>
+                                <span>GitHub & Detaylar</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Oyun 2 -->
+                <div class="game-card">
+                    <div class="image-container">
+                        <img src="ThisIsBlast.png" alt="Funny Match">
+                    </div>
+                    <div class="game-info">
+                        <h2 class="game-title">💥 This is Blast Clone</h2>
+                        <p class="game-description">
+                            Patlayıcı eğlence! Aynı renkteki blokları dokunarak patlatın, büyük gruplar oluşturup özel güçler kazanın. Stratejik hamle planlaması gerektiren, hızlı ve bağımlılık yapan bir tap-to-blast deneyimi.
+                        </p>
+                        <div class="game-tags">
+                            <span class="tag">Unity</span>
+                            <span class="tag">C#</span>
+                            <span class="tag">Tap-to-Blast</span>
+                            <span class="tag">Casual</span>
+                            <span class="tag">Puzzle</span>
+                        </div>
+                        <div class="game-actions">
+                            <button class="action-button watch-button" onclick="openVideoModal('This is Blast Clone', 'This is Blast Clone.mp4')">
+                                <span>📹</span>
+                                <span>Videoyu İzle</span>
+                            </button>
+                            <a href="https://github.com/eFurkanSngl/This-is-Blast-Clone-VP" target="_blank" class="action-button github-button">
+                                <span>📁</span>
+                                <span>GitHub & Detaylar</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Oyun 3 -->
+                <div class="game-card">
+                    <div class="image-container">
+                        <img src="DinoRun.png" alt="Dino Run">
+                    </div>
+                    <div class="game-info">
+                        <h2 class="game-title">🦖 Dino Run</h2>
+                        <p class="game-description">
+                            Yüksek hızlı sonsuz koşu macerası! Dinozorunu kontrol et, engellerin üzerinden atla, sürat art ve maksimum mesafeye ulaşmaya çalış. Dinamik zorluk sistemi ve çeşitli engel tipleriyle arcade aksiyonu.
+                        </p>
+                        <div class="game-tags">
+                            <span class="tag">Unity</span>
+                            <span class="tag">C#</span>
+                            <span class="tag">Endless Runner</span>
+                            <span class="tag">Arcade</span>
+                            <span class="tag">Hyper-Casual</span>
+                        </div>
+                        <div class="game-actions">
+                            <a href="https://frknsngl.itch.io/dino-run-dino" class="action-button play-button">
+                                <span>🎮</span>
+                                <span>Oyunu Oyna</span>
+                            </a>
+                            <a href="https://github.com/eFurkanSngl/Dino-Run-Game" target="_blank" class="action-button github-button">
+                                <span>📁</span>
+                                <span>GitHub & Detaylar</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Oyun 4 -->
+                <div class="game-card">
+                    <div class="image-container">
+                        <img src="FliptIt.png" alt="Flip It">
+                    </div>
+                    <div class="game-info">
+                        <h2 class="game-title">🔄 Flip It</h2>
+                        <p class="game-description">
+                            Zeka ve refleks testi! Kartları çevir, desenleri eşleştir ve hafıza becerilerini geliştir. Zamana karşı yarışırken doğru kombinasyonları bul. Artan zorluk seviyeleri ve çeşitli oyun modları.
+                        </p>
+                        <div class="game-tags">
+                            <span class="tag">Unity</span>
+                            <span class="tag">C#</span>
+                            <span class="tag">Memory</span>
+                            <span class="tag">Puzzle</span>
+                            <span class="tag">Brain Training</span>
+                        </div>
+                        <div class="game-actions">
+                            <a href=" https://frknsngl.itch.io/flip-it" class="action-button play-button">
+                                <span>🎮</span>
+                                <span>Oyunu Oyna</span>
+                            </a>
+                            <a href="https://github.com/eFurkanSngl/FlipIt-" target="_blank" class="action-button github-button">
+                                <span>📁</span>
+                                <span>GitHub & Detaylar</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Oyun 5 -->
+                <div class="game-card">
+                    <div class="image-container">
+                        <img src="FunnyMatch.png" alt="Space Adventure">
+                    </div>
+                    <div class="game-info">
+                        <h2 class="game-title">🎯 Funny Match</h2>
+                        <p class="game-description">
+                            Neşeli karakterlerle dolu match-2 mekaniği! Eğlenceli animasyonlar, renkli grafikler ve özel güç kombinasyonlarıyla kasvetli olmayan bir puzzle deneyimi. Her seviye farklı hedefler ve zorluklar sunuyor.
+                        </p>
+                        <div class="game-tags">
+                            <span class="tag">Unity</span>
+                            <span class="tag">C#</span>
+                            <span class="tag">Match-2</span>
+                            <span class="tag">Casual</span>
+                            <span class="tag">Family Friendly</span>
+                        </div>
+                        <div class="game-actions">
+                            <a href="https://frknsngl.itch.io/funny-match3" class="action-button play-button">
+                                <span>🎮</span>
+                                <span>Oyunu Oyna</span>
+                            </a>
+                            <a href="https://github.com/eFurkanSngl/FunnyMatchThree" target="_blank" class="action-button github-button">
+                                <span>📁</span>
+                                <span>GitHub & Detaylar</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Oyun 6 -->
+                 <div class="game-card">
+                    <div class="image-container">
+                        <img src="OceanBlast.png" alt="Royal Match Clone">
+                    </div>
+                    <div class="game-info">
+                        <h2 class="game-title">👑 OceanBlast</h2>
+                        <p class="game-description">
+                            Kraliyet temalı match-3 puzzle oyunu. Renkli taşları eşleştirerek odaları yenileyin, kombinasyonlar yaparak güçlü roketler ve bombalar oluşturun. Her seviyede farklı hedefler ve engellerle dolu stratejik bir deneyim.
+                        </p>
+                        <div class="game-tags">
+                            <span class="tag">Unity</span>
+                            <span class="tag">C#</span>
+                            <span class="tag">Match-3</span>
+                            <span class="tag">Puzzle</span>
+                            <span class="tag">Casual</span>
+                        </div>
+                        <div class="game-actions">
+                            <button class="action-button watch-button" onclick="openVideoModal('Royal Match Clone', 'OceanBlast.mp4')">
+                                <span>📹</span>
+                                <span>Videoyu İzle</span>
+                            </button>
+                            <a href="https://github.com/eFurkanSngl/Royal-Match-Clone" target="_blank" class="action-button github-button">
+                                <span>📁</span>
+                                <span>GitHub & Detaylar</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                            <footer>
+        <p class="footer-text">© 2024 Game Developer Portfolio. Tüm hakları saklıdır.</p>
+    </footer>
+</div>
+
+<script>
+    // Animated particles
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 150; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 10 + 's';
+        particle.style.animationDuration = (Math.random() * 5 + 8) + 's';
+        particlesContainer.appendChild(particle);
+    }
+
+    // Animated game characters in background
+    const bgAnimation = document.getElementById('backgroundAnimation');
+    const gameChars = ['🎮', '👾', '🕹️', '🎯', '⚡', '💎', '🚀', '🏆', '⭐', '🔥', '💥', '🎪', '🎨', '🎭', '🎲'];
+    const colors = ['#4ecdc4', '#ff6b6b', '#45b7d1', '#667eea', '#ffd93d', '#ff85a2'];
+    
+    for (let i = 0; i < 25; i++) {
+        const char = document.createElement('div');
+        char.className = 'game-character';
+        char.textContent = gameChars[Math.floor(Math.random() * gameChars.length)];
+        char.style.left = Math.random() * 100 + '%';
+        char.style.top = Math.random() * 100 + '%';
+        char.style.color = colors[Math.floor(Math.random() * colors.length)];
+        char.style.animationDelay = Math.random() * 15 + 's';
+        char.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        bgAnimation.appendChild(char);
+    }
+
+    // Video Modal Functions
+    function openVideoModal(gameName, videoPath) {
+        const modal = document.getElementById('videoModal');
+        const title = document.getElementById('modalTitle');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const videoSource = document.getElementById('videoSource');
+        
+        title.textContent = gameName;
+        videoSource.src = videoPath;
+        videoPlayer.load();
+        modal.classList.add('active');
+        videoPlayer.play();
+    }
+
+    function closeVideoModal() {
+        const modal = document.getElementById('videoModal');
+        const videoPlayer = document.getElementById('videoPlayer');
+        
+        videoPlayer.pause();
+        videoPlayer.currentTime = 0;
+        modal.classList.remove('active');
+    }
+
+    // Modal dışına tıklanınca kapat
+    document.getElementById('videoModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeVideoModal();
+        }
+    });
+
+    // ESC tuşu ile kapat
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeVideoModal();
+        }
+    });
+
+    // Add click animation to buttons
+    document.querySelectorAll('.action-button').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            ripple.style.position = 'absolute';
+            ripple.style.borderRadius = '50%';
+            ripple.style.background = 'rgba(255, 255, 255, 0.6)';
+            ripple.style.width = ripple.style.height = '100px';
+            ripple.style.marginLeft = '-50px';
+            ripple.style.marginTop = '-50px';
+            ripple.style.left = e.clientX - this.offsetLeft + 'px';
+            ripple.style.top = e.clientY - this.offsetTop + 'px';
+            ripple.style.animation = 'ripple 0.6s';
+            this.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        });
+    });
+</script>
