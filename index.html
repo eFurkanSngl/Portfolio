@@ -252,6 +252,68 @@
             animation: pulseGlow 2s infinite alternate;
         }
 
+        body:not(.admin) .stats-toggle,
+        body:not(.admin) .stats-panel { display: none; }
+
+        .admin-launcher {
+            position: fixed;
+            bottom: 22px; left: 22px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 2px solid var(--accent);
+            background: rgba(78,205,196,0.12);
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            z-index: 11;
+            box-shadow: 0 8px 20px rgba(78,205,196,0.2);
+            transition: all 0.25s ease;
+        }
+
+        .admin-launcher:hover { transform: translateY(-2px) scale(1.03); }
+        body:not(.admin) .admin-launcher { display: none; }
+
+        .admin-panel-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 21;
+            padding: 20px;
+        }
+
+        .admin-panel-modal.active { display: flex; }
+
+        .admin-panel {
+            background: linear-gradient(145deg, rgba(20,20,35,0.96), rgba(30,30,50,0.96));
+            border: 2px solid rgba(78,205,196,0.45);
+            border-radius: 16px;
+            padding: 22px;
+            max-width: 460px;
+            width: 100%;
+            color: #fff;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.45);
+            position: relative;
+        }
+
+        .admin-panel h3 { margin-bottom: 12px; }
+        .admin-panel .admin-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed rgba(255,255,255,0.12); }
+        .admin-panel .admin-row:last-child { border-bottom: none; }
+
+        .admin-close {
+            position: absolute;
+            top: 18px; right: 18px;
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
         .stats-panel {
             position: fixed;
             bottom: 100px; right: 22px;
@@ -338,6 +400,18 @@
                 <p data-i18n="gameClicksLabel">Oyun Tıklamaları</p>
                 <ul class="stats-list" id="gameClicksList"></ul>
             </div>
+        </div>
+    </div>
+
+    <button class="admin-launcher" id="adminLauncher" aria-label="Admin Panelini A�Y">Admin Panel</button>
+    <div class="admin-panel-modal" id="adminModal">
+        <div class="admin-panel">
+            <button class="admin-close" id="closeAdminModal" aria-label="Kapat">�-</button>
+            <h3>Admin Panel</h3>
+            <div class="admin-row"><span>Toplam Ziyaret</span><strong id="adminTotalVisits">0</strong></div>
+            <div class="admin-row"><span>Tekil Ziyaret��i</span><strong id="adminUniqueVisitors">0</strong></div>
+            <div class="admin-row"><span>BugǬnkǬ Ziyaret</span><strong id="adminTodayVisits">0</strong></div>
+            <p style="margin-top:12px; color:#b8b8b8; font-size:0.9em;">Shift+Alt+A tu�Yu ile admin modunu a�Yabilir/kapatabilirsiniz.</p>
         </div>
     </div>
 
@@ -676,43 +750,79 @@
     }
 
     // Stats
+    const API_BASE = 'http://localhost:3000/api';
+    const ADMIN_PASS = 'admin'; // Admin şifresini burada güncelle
+    const VISITOR_KEY = 'portfolioVisitorId';
+    const params = new URLSearchParams(window.location.search);
+    let isAdmin = params.get('admin') === '1' || localStorage.getItem('portfolioAdmin') === '1';
+    if (params.get('admin') === '1') localStorage.setItem('portfolioAdmin', '1');
+    document.body.classList.toggle('admin', isAdmin);
+
     const statsPanel = document.getElementById('statsPanel');
     const statsToggle = document.getElementById('statsToggle');
     const closeStats = document.getElementById('closeStats');
     const gameCards = document.querySelectorAll('.game-card');
+    const adminLauncher = document.getElementById('adminLauncher');
+    const adminModal = document.getElementById('adminModal');
+    const closeAdminModalBtn = document.getElementById('closeAdminModal');
+    let adminEventsBound = false;
 
-    function uid() { return crypto.randomUUID ? crypto.randomUUID() : 'id-' + Date.now() + '-' + Math.random().toString(16).slice(2); }
-    function getStats() { return JSON.parse(localStorage.getItem('portfolioStats') || '{}'); }
-    function saveStats(data) { localStorage.setItem('portfolioStats', JSON.stringify(data)); }
+    function getCachedStats() { return JSON.parse(localStorage.getItem('portfolioStats') || '{}'); }
+    function cacheStats(data) { localStorage.setItem('portfolioStats', JSON.stringify(data || {})); }
 
-    function bootstrapStats() {
-        const stats = getStats();
-        if (!stats.uniqueVisitorId) {
-            stats.uniqueVisitorId = uid();
-            stats.uniqueVisitors = (stats.uniqueVisitors || 0) + 1;
+    async function apiRequest(path, options = {}) {
+        const { method = 'GET', body } = options;
+        const res = await fetch(`${API_BASE}${path}`, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: body ? JSON.stringify(body) : undefined
+        });
+        if (!res.ok) throw new Error('API error');
+        return res.json();
+    }
+
+    async function recordVisit() {
+        try {
+            const visitorId = localStorage.getItem(VISITOR_KEY) || null;
+            const data = await apiRequest('/visit', { method: 'POST', body: { visitorId } });
+            if (data.visitorId) localStorage.setItem(VISITOR_KEY, data.visitorId);
+            if (data.stats) { cacheStats(data.stats); updateStatsUI(data.stats); }
+        } catch (err) {
+            updateStatsUI(getCachedStats());
         }
-        stats.totalVisits = (stats.totalVisits || 0) + 1;
-        const today = new Date().toISOString().slice(0,10);
-        if (stats.todayDate === today) stats.todayVisits = (stats.todayVisits || 0) + 1;
-        else { stats.todayDate = today; stats.todayVisits = 1; }
-        stats.gameClicks = stats.gameClicks || {};
-        saveStats(stats);
-        updateStatsUI();
     }
 
-    function incrementGameClick(id) {
-        const stats = getStats();
-        stats.gameClicks = stats.gameClicks || {};
-        stats.gameClicks[id] = (stats.gameClicks[id] || 0) + 1;
-        saveStats(stats);
-        updateStatsUI();
+    async function recordClick(id) {
+        try {
+            const visitorId = localStorage.getItem(VISITOR_KEY) || null;
+            const data = await apiRequest('/click', { method: 'POST', body: { visitorId, gameId: id } });
+            if (data.visitorId) localStorage.setItem(VISITOR_KEY, data.visitorId);
+            if (data.stats) { cacheStats(data.stats); updateStatsUI(data.stats); }
+        } catch (err) {
+            // sessizce yoksay
+        }
     }
 
-    function updateStatsUI() {
-        const { totalVisits = 0, uniqueVisitors = 0, todayVisits = 0, gameClicks = {} } = getStats();
+    async function fetchStats() {
+        try {
+            const data = await apiRequest('/stats');
+            if (data.stats) { cacheStats(data.stats); updateStatsUI(data.stats); }
+        } catch (err) {
+            updateStatsUI(getCachedStats());
+        }
+    }
+
+    function updateStatsUI(stats = getCachedStats()) {
+        const { totalVisits = 0, uniqueVisitors = 0, todayVisits = 0, gameClicks = {} } = stats;
         document.getElementById('totalVisitsValue').textContent = totalVisits;
         document.getElementById('uniqueVisitorsValue').textContent = uniqueVisitors;
         document.getElementById('todayVisitsValue').textContent = todayVisits;
+        const adminTotal = document.getElementById('adminTotalVisits');
+        const adminUnique = document.getElementById('adminUniqueVisitors');
+        const adminToday = document.getElementById('adminTodayVisits');
+        if (adminTotal) adminTotal.textContent = totalVisits;
+        if (adminUnique) adminUnique.textContent = uniqueVisitors;
+        if (adminToday) adminToday.textContent = todayVisits;
         const list = document.getElementById('gameClicksList');
         list.innerHTML = '';
         const entries = Object.entries(gameClicks);
@@ -728,16 +838,60 @@
         });
     }
 
-    statsToggle.addEventListener('click', () => statsPanel.classList.toggle('active'));
-    closeStats.addEventListener('click', closeStatsPanel);
+    function bindAdminEvents() {
+        if (adminEventsBound) return;
+        statsToggle.addEventListener('click', () => statsPanel.classList.toggle('active'));
+        closeStats.addEventListener('click', closeStatsPanel);
+        adminLauncher.addEventListener('click', openAdminModal);
+        closeAdminModalBtn.addEventListener('click', closeAdminModal);
+        adminModal.addEventListener('click', e => { if (e.target === e.currentTarget) closeAdminModal(); });
+        adminEventsBound = true;
+    }
+    if (isAdmin) { bindAdminEvents(); }
     function closeStatsPanel() { statsPanel.classList.remove('active'); }
+    function openAdminModal() { fetchStats(); adminModal.classList.add('active'); }
+    function closeAdminModal() { adminModal.classList.remove('active'); }
+
+    function enableAdminMode() {
+        isAdmin = true;
+        localStorage.setItem('portfolioAdmin', '1');
+        document.body.classList.add('admin');
+        bindAdminEvents();
+        updateStatsUI();
+    }
+
+    function disableAdminMode() {
+        isAdmin = false;
+        localStorage.removeItem('portfolioAdmin');
+        document.body.classList.remove('admin');
+        closeStatsPanel();
+        closeAdminModal();
+    }
+
+    function promptAdminUnlock() {
+        const code = prompt('Admin kodu nedir?');
+        if (code === null) return;
+        if (code === ADMIN_PASS) {
+            enableAdminMode();
+            openAdminModal();
+        } else {
+            alert('Yanl�� kod');
+        }
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.shiftKey && e.altKey && e.key.toLowerCase() === 'a') {
+            if (isAdmin) disableAdminMode();
+            else promptAdminUnlock();
+        }
+    });
 
     gameCards.forEach(card => {
         const id = card.dataset.gameId;
-        card.querySelectorAll('.action-button').forEach(btn => btn.addEventListener('click', () => incrementGameClick(id)));
+        card.querySelectorAll('.action-button').forEach(btn => btn.addEventListener('click', () => recordClick(id)));
     });
 
-    bootstrapStats();
+    recordVisit();
 </script>
 </body>
 </html>
