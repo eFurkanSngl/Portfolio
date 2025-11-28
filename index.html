@@ -254,6 +254,9 @@
             transition: all 0.35s ease;
             position: relative;
             isolation: isolate;
+            --tiltX: 0deg;
+            --tiltY: 0deg;
+            transform: translateZ(0);
         }
 
         .game-card::before {
@@ -284,7 +287,7 @@
         body.light .game-card { background: var(--light-card); border: 1px solid var(--light-border); }
 
         .game-card:hover {
-            transform: translateY(-10px) scale(1.01);
+            transform: translateY(-10px) scale(1.01) rotateX(var(--tiltX)) rotateY(var(--tiltY));
             box-shadow:
                 0 20px 40px rgba(0,0,0,0.35),
                 0 0 28px rgba(78,205,196,0.45),
@@ -318,6 +321,39 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        .vote-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 16px 0 12px;
+        }
+        .vote-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.16);
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+            color: inherit;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-weight: 600;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.2);
+        }
+        .vote-button .vote-icon { font-size: 18px; line-height: 1; }
+        .vote-button .vote-count { font-weight: 700; opacity: 0.9; min-width: 22px; text-align: right; }
+        .vote-button.like:hover { border-color: rgba(78,205,196,0.5); box-shadow: 0 12px 24px rgba(78,205,196,0.28); transform: translateY(-1px); }
+        .vote-button.dislike:hover { border-color: rgba(255,107,107,0.5); box-shadow: 0 12px 24px rgba(255,107,107,0.28); transform: translateY(-1px); }
+        .vote-button.active.like { background: linear-gradient(120deg, rgba(78,205,196,0.4), rgba(69,183,209,0.25)); border-color: rgba(78,205,196,0.9); }
+        .vote-button.active.dislike { background: linear-gradient(120deg, rgba(255,107,107,0.45), rgba(255,107,107,0.25)); border-color: rgba(255,107,107,0.9); }
+        body.light .vote-button { border-color: var(--light-border); background: rgba(0,0,0,0.04); color: var(--light-text); }
+        body.light .vote-button.active.like { background: linear-gradient(120deg, rgba(69,183,209,0.15), rgba(78,205,196,0.12)); }
+        body.light .vote-button.active.dislike { background: linear-gradient(120deg, rgba(255,107,107,0.18), rgba(255,107,107,0.12)); }
+
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.5s ease, transform 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
 
         .game-description { color: #d0d0d0; line-height: 1.6; margin-bottom: 16px; }
         body.light .game-description { color: var(--light-muted); }
@@ -352,7 +388,7 @@
         }
 
         .top-controls {
-            position: fixed;
+            position: absolute;
             top: 16px;
             right: 18px;
             display: flex;
@@ -590,6 +626,10 @@
                 <p data-i18n="gameClicksLabel">Oyun Tıklamaları</p>
                 <ul class="stats-list" id="gameClicksList"></ul>
             </div>
+            <div class="stat-card full">
+                <p>Oyun Oylari</p>
+                <ul class="stats-list" id="gameVotesList"></ul>
+            </div>
         </div>
     </div>
 
@@ -601,6 +641,8 @@
             <div class="admin-row"><span>Toplam Ziyaret</span><strong id="adminTotalVisits">0</strong></div>
             <div class="admin-row"><span>Tekil Ziyaret��i</span><strong id="adminUniqueVisitors">0</strong></div>
             <div class="admin-row"><span>BugǬnkǬ Ziyaret</span><strong id="adminTodayVisits">0</strong></div>
+            <div class="admin-row"><span>Oyun Oylari</span></div>
+            <ul class="stats-list" id="adminGameVotesList" style="margin-top:6px;"></ul>
             <p style="margin-top:12px; color:#b8b8b8; font-size:0.9em;">Shift+Alt+A tu�Yu ile admin modunu a�Yabilir/kapatabilirsiniz.</p>
         </div>
     </div>
@@ -659,6 +701,10 @@
                     <div class="game-tags">
                         <span class="tag">Unity</span><span class="tag">C#</span><span class="tag">Match-3</span><span class="tag">Puzzle</span><span class="tag">Casual</span>
                     </div>
+                    <div class="vote-bar" data-game-id="royal">
+                        <button class="vote-button like" data-vote="like" aria-label="Begen"><span class="vote-icon">&#128077;</span><span class="vote-count" data-count="like">0</span></button>
+                        <button class="vote-button dislike" data-vote="dislike" aria-label="Begenmedim"><span class="vote-icon">&#128078;</span><span class="vote-count" data-count="dislike">0</span></button>
+                    </div>
                     <div class="game-actions">
                         <button class="action-button watch-button" onclick="openVideoModal('Royal Match Clone', 'royal-match-video.mp4')" data-i18n="watchVideo">📹 Videoyu İzle</button>
                         <a href="https://github.com/eFurkanSngl/Royal-Match-Clone" target="_blank" class="action-button github-button" data-i18n="githubDetails">📁 GitHub & Detaylar</a>
@@ -675,6 +721,10 @@
                     </p>
                     <div class="game-tags">
                         <span class="tag">Unity</span><span class="tag">C#</span><span class="tag">Tap-to-Blast</span><span class="tag">Casual</span><span class="tag">Puzzle</span>
+                    </div>
+                    <div class="vote-bar" data-game-id="blast">
+                        <button class="vote-button like" data-vote="like" aria-label="Begen"><span class="vote-icon">&#128077;</span><span class="vote-count" data-count="like">0</span></button>
+                        <button class="vote-button dislike" data-vote="dislike" aria-label="Begenmedim"><span class="vote-icon">&#128078;</span><span class="vote-count" data-count="dislike">0</span></button>
                     </div>
                     <div class="game-actions">
                         <button class="action-button watch-button" onclick="openVideoModal('This is Blast Clone', 'ThisIsBlastVideo.mp4')" data-i18n="watchVideo">📹 Videoyu İzle</button>
@@ -693,6 +743,10 @@
                     <div class="game-tags">
                         <span class="tag">Unity</span><span class="tag">C#</span><span class="tag">Endless Runner</span><span class="tag">Arcade</span><span class="tag">Hyper-Casual</span>
                     </div>
+                    <div class="vote-bar" data-game-id="dino">
+                        <button class="vote-button like" data-vote="like" aria-label="Begen"><span class="vote-icon">&#128077;</span><span class="vote-count" data-count="like">0</span></button>
+                        <button class="vote-button dislike" data-vote="dislike" aria-label="Begenmedim"><span class="vote-icon">&#128078;</span><span class="vote-count" data-count="dislike">0</span></button>
+                    </div>
                     <div class="game-actions">
                         <a href="https://frknsngl.itch.io/dino-run-dino" class="action-button play-button" target="_blank" data-i18n="playGame">🎮 Oyunu Oyna</a>
                         <a href="https://github.com/eFurkanSngl/Dino-Run-Game" target="_blank" class="action-button github-button" data-i18n="githubDetails">📁 GitHub & Detaylar</a>
@@ -709,6 +763,10 @@
                     </p>
                     <div class="game-tags">
                         <span class="tag">Unity</span><span class="tag">C#</span><span class="tag">Memory</span><span class="tag">Puzzle</span><span class="tag">Brain Training</span>
+                    </div>
+                    <div class="vote-bar" data-game-id="flip">
+                        <button class="vote-button like" data-vote="like" aria-label="Begen"><span class="vote-icon">&#128077;</span><span class="vote-count" data-count="like">0</span></button>
+                        <button class="vote-button dislike" data-vote="dislike" aria-label="Begenmedim"><span class="vote-icon">&#128078;</span><span class="vote-count" data-count="dislike">0</span></button>
                     </div>
                     <div class="game-actions">
                         <a href="https://frknsngl.itch.io/flip-it" class="action-button play-button" target="_blank" data-i18n="playGame">🎮 Oyunu Oyna</a>
@@ -727,6 +785,10 @@
                     <div class="game-tags">
                         <span class="tag">Unity</span><span class="tag">C#</span><span class="tag">Match-3</span><span class="tag">Casual</span><span class="tag">Family Friendly</span>
                     </div>
+                    <div class="vote-bar" data-game-id="funny">
+                        <button class="vote-button like" data-vote="like" aria-label="Begen"><span class="vote-icon">&#128077;</span><span class="vote-count" data-count="like">0</span></button>
+                        <button class="vote-button dislike" data-vote="dislike" aria-label="Begenmedim"><span class="vote-icon">&#128078;</span><span class="vote-count" data-count="dislike">0</span></button>
+                    </div>
                     <div class="game-actions">
                         <a href="https://frknsngl.itch.io/funny-match3" class="action-button play-button" target="_blank" data-i18n="playGame">🎮 Oyunu Oyna</a>
                         <a href="https://github.com/eFurkanSngl/FunnyMatchThree" target="_blank" class="action-button github-button" data-i18n="githubDetails">📁 GitHub & Detaylar</a>
@@ -743,6 +805,10 @@
                     </p>
                     <div class="game-tags">
                         <span class="tag">Unity</span><span class="tag">C#</span><span class="tag">Match-3</span><span class="tag">Puzzle</span><span class="tag">Casual</span>
+                    </div>
+                    <div class="vote-bar" data-game-id="ocean">
+                        <button class="vote-button like" data-vote="like" aria-label="Begen"><span class="vote-icon">&#128077;</span><span class="vote-count" data-count="like">0</span></button>
+                        <button class="vote-button dislike" data-vote="dislike" aria-label="Begenmedim"><span class="vote-icon">&#128078;</span><span class="vote-count" data-count="dislike">0</span></button>
                     </div>
                     <div class="game-actions">
                         <button class="action-button watch-button" onclick="openVideoModal('OceanBlast', 'OceanBlast.mp4')" data-i18n="watchVideo">📹 Videoyu İzle</button>
@@ -953,13 +1019,20 @@
     }
 
     // Stats
-    const API_BASE = '/api';
+    const params = new URLSearchParams(window.location.search);
+    const savedApiBase = localStorage.getItem('portfolioApiBase');
+    const apiBaseParam = params.get('apiBase');
+    const DEFAULT_API_BASE = window.location.origin.startsWith('file:')
+        ? 'http://localhost:3000/api'
+        : '/api';
+    const API_BASE = (apiBaseParam || savedApiBase || DEFAULT_API_BASE).replace(/\/$/, '');
+    if (apiBaseParam) localStorage.setItem('portfolioApiBase', API_BASE);
     const ADMIN_PASS = 'admin'; // Admin şifresini burada güncelle
     const VISITOR_KEY = 'portfolioVisitorId';
-    const params = new URLSearchParams(window.location.search);
     let isAdmin = params.get('admin') === '1' || localStorage.getItem('portfolioAdmin') === '1';
     if (params.get('admin') === '1') localStorage.setItem('portfolioAdmin', '1');
     document.body.classList.toggle('admin', isAdmin);
+    let currentVisitorVotes = {};
 
     const statsPanel = document.getElementById('statsPanel');
     const statsToggle = document.getElementById('statsToggle');
@@ -989,9 +1062,10 @@
             const visitorId = localStorage.getItem(VISITOR_KEY) || null;
             const data = await apiRequest('/visit', { method: 'POST', body: { visitorId } });
             if (data.visitorId) localStorage.setItem(VISITOR_KEY, data.visitorId);
-            if (data.stats) { cacheStats(data.stats); updateStatsUI(data.stats); }
+            if (data.visitorVotes) currentVisitorVotes = data.visitorVotes;
+            if (data.stats) { cacheStats(data.stats); updateStatsUI(data.stats, currentVisitorVotes); }
         } catch (err) {
-            updateStatsUI(getCachedStats());
+            updateStatsUI(getCachedStats(), currentVisitorVotes);
         }
     }
 
@@ -1000,7 +1074,21 @@
             const visitorId = localStorage.getItem(VISITOR_KEY) || null;
             const data = await apiRequest('/click', { method: 'POST', body: { visitorId, gameId: id } });
             if (data.visitorId) localStorage.setItem(VISITOR_KEY, data.visitorId);
-            if (data.stats) { cacheStats(data.stats); updateStatsUI(data.stats); }
+            if (data.visitorVotes) currentVisitorVotes = data.visitorVotes;
+            if (data.stats) { cacheStats(data.stats); updateStatsUI(data.stats, currentVisitorVotes); }
+        } catch (err) {
+            // sessizce yoksay
+        }
+    }
+
+    async function recordVote(id, value) {
+        if (!value) return;
+        try {
+            const visitorId = localStorage.getItem(VISITOR_KEY) || null;
+            const data = await apiRequest('/vote', { method: 'POST', body: { visitorId, gameId: id, value } });
+            if (data.visitorId) localStorage.setItem(VISITOR_KEY, data.visitorId);
+            if (data.visitorVotes) currentVisitorVotes = data.visitorVotes;
+            if (data.stats) { cacheStats(data.stats); updateStatsUI(data.stats, currentVisitorVotes); }
         } catch (err) {
             // sessizce yoksay
         }
@@ -1009,14 +1097,17 @@
     async function fetchStats() {
         try {
             const data = await apiRequest('/stats');
-            if (data.stats) { cacheStats(data.stats); updateStatsUI(data.stats); }
+            if (data.visitorVotes) currentVisitorVotes = data.visitorVotes;
+            if (data.stats) { cacheStats(data.stats); updateStatsUI(data.stats, currentVisitorVotes); }
         } catch (err) {
-            updateStatsUI(getCachedStats());
+            updateStatsUI(getCachedStats(), currentVisitorVotes);
         }
     }
 
-    function updateStatsUI(stats = getCachedStats()) {
-        const { totalVisits = 0, uniqueVisitors = 0, todayVisits = 0, gameClicks = {} } = stats;
+    function updateStatsUI(stats = getCachedStats(), visitorVotes = currentVisitorVotes) {
+        const { totalVisits = 0, uniqueVisitors = 0, todayVisits = 0, gameClicks = {}, gameVotes = {} } = stats || {};
+        currentVisitorVotes = visitorVotes || currentVisitorVotes || {};
+
         document.getElementById('totalVisitsValue').textContent = totalVisits;
         document.getElementById('uniqueVisitorsValue').textContent = uniqueVisitors;
         document.getElementById('todayVisitsValue').textContent = todayVisits;
@@ -1026,18 +1117,69 @@
         if (adminTotal) adminTotal.textContent = totalVisits;
         if (adminUnique) adminUnique.textContent = uniqueVisitors;
         if (adminToday) adminToday.textContent = todayVisits;
-        const list = document.getElementById('gameClicksList');
-        list.innerHTML = '';
-        const entries = Object.entries(gameClicks);
-        if (!entries.length) {
-            const li = document.createElement('li'); li.textContent = 'Henüz veri yok / No data yet'; list.appendChild(li); return;
+
+        const clicksList = document.getElementById('gameClicksList');
+        if (clicksList) {
+            clicksList.innerHTML = '';
+            const entries = Object.entries(gameClicks);
+            if (!entries.length) {
+                const li = document.createElement('li'); li.textContent = 'Henuz veri yok / No data yet'; clicksList.appendChild(li);
+            } else {
+                entries.forEach(([id, count]) => {
+                    const name = document.querySelector(`.game-card[data-game-id="${id}"] .game-title`)?.textContent.trim() || id;
+                    const li = document.createElement('li');
+                    const n = document.createElement('span'); n.textContent = name;
+                    const c = document.createElement('span'); c.textContent = count;
+                    li.appendChild(n); li.appendChild(c); clicksList.appendChild(li);
+                });
+            }
         }
-        entries.forEach(([id, count]) => {
-            const name = document.querySelector(`.game-card[data-game-id="${id}"] .game-title`)?.textContent.trim() || id;
-            const li = document.createElement('li');
-            const n = document.createElement('span'); n.textContent = name;
-            const c = document.createElement('span'); c.textContent = count;
-            li.appendChild(n); li.appendChild(c); list.appendChild(li);
+
+        const voteEntries = Object.entries(gameVotes || {});
+        const voteList = document.getElementById('gameVotesList');
+        if (voteList) {
+            voteList.innerHTML = '';
+            if (!voteEntries.length) {
+                const li = document.createElement('li'); li.textContent = 'Henuz oy yok / No votes yet'; voteList.appendChild(li);
+            } else {
+                voteEntries.forEach(([id, data]) => {
+                    const name = document.querySelector(`.game-card[data-game-id="${id}"] .game-title`)?.textContent.trim() || id;
+                    const li = document.createElement('li');
+                    const n = document.createElement('span'); n.textContent = name;
+                    const c = document.createElement('span'); c.textContent = `Like ${data.likes || 0} | Dislike ${data.dislikes || 0}`;
+                    li.appendChild(n); li.appendChild(c); voteList.appendChild(li);
+                });
+            }
+        }
+
+        const adminVoteList = document.getElementById('adminGameVotesList');
+        if (adminVoteList) {
+            adminVoteList.innerHTML = '';
+            if (!voteEntries.length) {
+                const li = document.createElement('li'); li.textContent = 'Henuz oy yok / No votes yet'; adminVoteList.appendChild(li);
+            } else {
+                voteEntries.forEach(([id, data]) => {
+                    const name = document.querySelector(`.game-card[data-game-id="${id}"] .game-title`)?.textContent.trim() || id;
+                    const li = document.createElement('li');
+                    const n = document.createElement('span'); n.textContent = name;
+                    const c = document.createElement('span'); c.textContent = `Like ${data.likes || 0} | Dislike ${data.dislikes || 0}`;
+                    li.appendChild(n); li.appendChild(c); adminVoteList.appendChild(li);
+                });
+            }
+        }
+
+        document.querySelectorAll('.vote-bar').forEach(bar => {
+            const id = bar.dataset.gameId;
+            const counts = gameVotes[id] || { likes: 0, dislikes: 0 };
+            const likeCount = bar.querySelector('[data-count="like"]');
+            const dislikeCount = bar.querySelector('[data-count="dislike"]');
+            if (likeCount) likeCount.textContent = counts.likes || 0;
+            if (dislikeCount) dislikeCount.textContent = counts.dislikes || 0;
+            bar.querySelectorAll('.vote-button').forEach(btn => {
+                const val = btn.dataset.vote;
+                const active = currentVisitorVotes && currentVisitorVotes[id] === val;
+                btn.classList.toggle('active', !!active);
+            });
         });
     }
 
@@ -1091,8 +1233,40 @@
 
     gameCards.forEach(card => {
         const id = card.dataset.gameId;
+        card.classList.add('reveal');
         card.querySelectorAll('.action-button').forEach(btn => btn.addEventListener('click', () => recordClick(id)));
+        const voteBar = card.querySelector('.vote-bar');
+        if (voteBar) {
+            voteBar.querySelectorAll('.vote-button').forEach(btn => {
+                btn.addEventListener('click', () => recordVote(id, btn.dataset.vote));
+            });
+        }
     });
+
+    const revealObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                revealObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.18 });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    function attachTilt(card) {
+        card.addEventListener('pointermove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width - 0.5) * 10;
+            const y = ((e.clientY - rect.top) / rect.height - 0.5) * -10;
+            card.style.setProperty('--tiltX', `${y}deg`);
+            card.style.setProperty('--tiltY', `${x}deg`);
+        });
+        card.addEventListener('pointerleave', () => {
+            card.style.setProperty('--tiltX', '0deg');
+            card.style.setProperty('--tiltY', '0deg');
+        });
+    }
+    gameCards.forEach(attachTilt);
 
     // Scroll progress indicator
     const scrollProgress = document.getElementById('scrollProgress');
