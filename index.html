@@ -348,6 +348,12 @@
         .vote-button.dislike:hover { border-color: rgba(255,107,107,0.5); box-shadow: 0 12px 24px rgba(255,107,107,0.28); transform: translateY(-1px); }
         .vote-button.active.like { background: linear-gradient(120deg, rgba(78,205,196,0.4), rgba(69,183,209,0.25)); border-color: rgba(78,205,196,0.9); }
         .vote-button.active.dislike { background: linear-gradient(120deg, rgba(255,107,107,0.45), rgba(255,107,107,0.25)); border-color: rgba(255,107,107,0.9); }
+        .vote-button.pop .vote-icon { animation: votePop 220ms ease; }
+        @keyframes votePop {
+            0% { transform: scale(1); }
+            40% { transform: scale(1.16); }
+            100% { transform: scale(1); }
+        }
         body.light .vote-button { border-color: var(--light-border); background: rgba(0,0,0,0.04); color: var(--light-text); }
         body.light .vote-button.active.like { background: linear-gradient(120deg, rgba(69,183,209,0.15), rgba(78,205,196,0.12)); }
         body.light .vote-button.active.dislike { background: linear-gradient(120deg, rgba(255,107,107,0.18), rgba(255,107,107,0.12)); }
@@ -1081,8 +1087,33 @@
         }
     }
 
+    function applyLocalVote(id, value) {
+        const stats = getCachedStats() || {};
+        stats.gameVotes = stats.gameVotes || {};
+        const counts = { ...(stats.gameVotes[id] || { likes: 0, dislikes: 0 }) };
+        const previous = (currentVisitorVotes || {})[id];
+
+        if (previous === value) {
+            updateStatsUI(stats, currentVisitorVotes);
+            return stats;
+        }
+
+        if (previous === 'like' && counts.likes > 0) counts.likes -= 1;
+        if (previous === 'dislike' && counts.dislikes > 0) counts.dislikes -= 1;
+
+        if (value === 'like') counts.likes += 1;
+        else counts.dislikes += 1;
+
+        stats.gameVotes[id] = counts;
+        currentVisitorVotes = { ...(currentVisitorVotes || {}), [id]: value };
+        cacheStats(stats);
+        updateStatsUI(stats, currentVisitorVotes);
+        return stats;
+    }
+
     async function recordVote(id, value) {
         if (!value) return;
+        const optimisticStats = applyLocalVote(id, value);
         try {
             const visitorId = localStorage.getItem(VISITOR_KEY) || null;
             const data = await apiRequest('/vote', { method: 'POST', body: { visitorId, gameId: id, value } });
@@ -1090,7 +1121,7 @@
             if (data.visitorVotes) currentVisitorVotes = data.visitorVotes;
             if (data.stats) { cacheStats(data.stats); updateStatsUI(data.stats, currentVisitorVotes); }
         } catch (err) {
-            // sessizce yoksay
+            if (optimisticStats) updateStatsUI(optimisticStats, currentVisitorVotes);
         }
     }
 
@@ -1213,6 +1244,13 @@
         closeAdminModal();
     }
 
+    function triggerVoteAnimation(btn) {
+        if (!btn) return;
+        btn.classList.remove('pop');
+        void btn.offsetWidth;
+        btn.classList.add('pop');
+    }
+
     function promptAdminUnlock() {
         const code = prompt('Admin kodu nedir?');
         if (code === null) return;
@@ -1238,7 +1276,10 @@
         const voteBar = card.querySelector('.vote-bar');
         if (voteBar) {
             voteBar.querySelectorAll('.vote-button').forEach(btn => {
-                btn.addEventListener('click', () => recordVote(id, btn.dataset.vote));
+                btn.addEventListener('click', () => {
+                    triggerVoteAnimation(btn);
+                    recordVote(id, btn.dataset.vote);
+                });
             });
         }
     });
