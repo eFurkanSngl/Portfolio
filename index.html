@@ -576,6 +576,10 @@
     }
     .video-container { background: #000; border-radius: 10px; overflow: hidden; margin-top: 16px; box-shadow: 0 12px 30px rgba(0,0,0,0.45); }
     .video-container video { width: 100%; max-height: 70vh; display: block; }
+    .video-controls { text-align: center; margin-top: 12px; }
+    .mute-button { background: rgba(78,205,196,0.2); border: 1px solid rgba(78,205,196,0.5); color: #fff; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.9em; transition: all 0.3s ease; }
+    .mute-button:hover { background: rgba(78,205,196,0.4); }
+    .video-description { margin-top: 16px; font-size: 0.9em; color: #ccc; text-align: center; line-height: 1.4; }
 
         footer { text-align: center; padding: 50px 20px; margin-top: 70px; border-top: 2px solid rgba(78,205,196,0.3); }
         body.light footer { border-color: var(--light-border); }
@@ -658,11 +662,15 @@
             <button class="close-modal" onclick="closeVideoModal()" aria-label="Kapat">×</button>
             <h3 class="modal-title" id="modalTitle" data-i18n="modalTitle">Oyun Videosu</h3>
             <div class="video-container">
-                <video id="videoPlayer" controls preload="metadata" playsinline>
+                <video id="videoPlayer" preload="metadata" playsinline muted autoplay>
                     <source id="videoSource" src="" type="video/mp4">
                     <span data-i18n="videoFallback">Tarayıcınız video etiketini desteklemiyor.</span>
                 </video>
             </div>
+            <div class="video-controls">
+                <button id="muteButton" class="mute-button" onclick="toggleMute()">🔊 Ses Aç</button>
+            </div>
+            <p class="video-description" id="videoDescription"></p>
         </div>
     </div>
 
@@ -822,6 +830,26 @@
                     </div>
                 </div>
             </div>
+
+            <div class="game-card" data-game-id="blocksort">
+                <div class="image-container"><img src="blocksortss.png" alt="Block Sort" loading="lazy" decoding="async"></div>
+                <div class="game-info">
+                    <h2 class="game-title" data-i18n="blocksort.title">🧩 Block Sort</h2>
+                    <p class="game-description" data-i18n="blocksort.description">
+                        Blokları akıllıca eşleştirerek yok edin! Renkli blokları sıralayın, aynı renkleri birleştirin ve zincirleme tepkiler oluşturun. Stratejik düşünme ve hızlı karar verme becerilerini geliştiren bağımlılık yapan bir puzzle deneyimi. Virtual Projects şirketinde geliştirdiğim bir proje.
+                    </p>
+                    <div class="game-tags">
+                        <span class="tag">Unity</span><span class="tag">C#</span><span class="tag">Puzzle</span><span class="tag">Sorting</span><span class="tag">Casual</span>
+                    </div>
+                    <div class="vote-bar" data-game-id="blocksort">
+                        <button class="vote-button like" data-vote="like" aria-label="Begen"><span class="vote-icon">&#128077;</span><span class="vote-count" data-count="like">0</span></button>
+                        <button class="vote-button dislike" data-vote="dislike" aria-label="Begenmedim"><span class="vote-icon">&#128078;</span><span class="vote-count" data-count="dislike">0</span></button>
+                    </div>
+                    <div class="game-actions">
+                        <button class="action-button watch-button" onclick="openVideoModal('Block Sort', 'Block Sort.mp4', 'Blokları akıllıca eşleştirerek yok edin! Renkli blokları sıralayın, aynı renkleri birleştirin ve zincirleme tepkiler oluşturun. Stratejik düşünme ve hızlı karar verme becerilerini geliştiren bağımlılık yapan bir puzzle deneyimi. Virtual Projects şirketinde geliştirdiğim bir proje. Tüm hakları Virtual Projects şirketine aittir.')" data-i18n="watchVideo">📹 Videoyu İzle</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <footer>
@@ -859,22 +887,44 @@
     }
 
     // Video modal
-    function openVideoModal(name, src) {
+    function openVideoModal(name, src, description = '') {
         const modal = document.getElementById('videoModal');
         const title = document.getElementById('modalTitle');
         const video = document.getElementById('videoPlayer');
         const source = document.getElementById('videoSource');
+        const desc = document.getElementById('videoDescription');
+        const muteBtn = document.getElementById('muteButton');
         title.textContent = name;
         source.src = src;
+        desc.textContent = description;
         video.load();
         modal.classList.add('active');
-        video.play();
+        video.play().catch(() => {
+            // Autoplay blocked, user can click play
+        });
+        updateMuteButton();
+    }
+    function toggleMute() {
+        const video = document.getElementById('videoPlayer');
+        video.muted = !video.muted;
+        updateMuteButton();
+    }
+    function updateMuteButton() {
+        const video = document.getElementById('videoPlayer');
+        const muteBtn = document.getElementById('muteButton');
+        if (video.muted) {
+            muteBtn.textContent = '🔊 Ses Aç';
+        } else {
+            muteBtn.textContent = '🔇 Ses Kapat';
+        }
     }
     function closeVideoModal() {
         const modal = document.getElementById('videoModal');
         const video = document.getElementById('videoPlayer');
+        const desc = document.getElementById('videoDescription');
         video.pause();
         video.currentTime = 0;
+        desc.textContent = '';
         modal.classList.remove('active');
     }
     document.getElementById('videoModal').addEventListener('click', e => {
