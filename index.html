@@ -310,8 +310,10 @@
         }
 
         .image-container { width: 100%; height: 230px; overflow: hidden; background: #000; }
-        .image-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease; }
-        .game-card:hover .image-container img { transform: scale(1.08); }
+        .image-container img,
+        .image-container video { width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease; display: block; }
+        .game-card:hover .image-container img,
+        .game-card:hover .image-container video { transform: scale(1.08); }
 
         .game-info { padding: 22px; }
         .game-title {
@@ -705,7 +707,29 @@
 
     <div class="container">
         <div class="games-grid">
-            <div class="game-card" data-game-id="royal">
+            <div class="game-card" data-game-id="finddiff" data-added-order="9000">
+                <div class="image-container">
+                    <img src="../FDTH.png" alt="Find The Differences" loading="lazy" decoding="async">
+                </div>
+                <div class="game-info">
+                    <h2 class="game-title">Find The Differences</h2>
+                    <p class="game-description">
+                        Dikkat ve gozlem becerilerini one cikaran 2D fark bulma oyunu. Iki sahneyi karsilastir, en ince detaylari yakala ve sure dolmadan tum farklari bul. Akici tempo, temiz gorsel dil ve seviyeye gore artan zorluk ile rahat ama odak gerektiren bir deneyim sunar.
+                    </p>
+                    <div class="game-tags">
+                        <span class="tag">Unity</span><span class="tag">C#</span><span class="tag">2D</span><span class="tag">Find The Differences</span><span class="tag">Puzzle</span>
+                    </div>
+                    <div class="vote-bar" data-game-id="finddiff">
+                        <button class="vote-button like" data-vote="like" aria-label="Begen"><span class="vote-icon">&#128077;</span><span class="vote-count" data-count="like">0</span></button>
+                        <button class="vote-button dislike" data-vote="dislike" aria-label="Begenmedim"><span class="vote-icon">&#128078;</span><span class="vote-count" data-count="dislike">0</span></button>
+                    </div>
+                    <div class="game-actions">
+                        <button class="action-button watch-button" onclick="openVideoModal('Find The Differences', '../Find.videos.mp4')" data-i18n="watchVideo">Videoyu Izle</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card" data-game-id="royal" data-added-order="7500">
                 <div class="image-container"><img src="RoyalMatch.png" alt="Royal Match" loading="lazy" decoding="async"></div>
                 <div class="game-info">
                     <h2 class="game-title" data-i18n="royal.title">👑 Royal Match Clone</h2>
@@ -726,7 +750,7 @@
                 </div>
             </div>
 
-            <div class="game-card" data-game-id="blast">
+            <div class="game-card" data-game-id="blast" data-added-order="7400">
                 <div class="image-container"><img src="ThisIsBlast.png" alt="This is Blast" loading="lazy" decoding="async"></div>
                 <div class="game-info">
                     <h2 class="game-title" data-i18n="blast.title">💥 This is Blast Clone</h2>
@@ -747,7 +771,7 @@
                 </div>
             </div>
 
-            <div class="game-card" data-game-id="dino">
+            <div class="game-card" data-game-id="dino" data-added-order="4000">
                 <div class="image-container"><img src="DinoRun.png" alt="Dino Run" loading="lazy" decoding="async"></div>
                 <div class="game-info">
                     <h2 class="game-title" data-i18n="dino.title">🦖 Dino Run</h2>
@@ -768,7 +792,7 @@
                 </div>
             </div>
 
-            <div class="game-card" data-game-id="flip">
+            <div class="game-card" data-game-id="flip" data-added-order="5000">
                 <div class="image-container"><img src="FliptIt.png" alt="Flip It" loading="lazy" decoding="async"></div>
                 <div class="game-info">
                     <h2 class="game-title" data-i18n="flip.title">🔄 Flip It</h2>
@@ -789,7 +813,7 @@
                 </div>
             </div>
 
-            <div class="game-card" data-game-id="funny">
+            <div class="game-card" data-game-id="funny" data-added-order="6000">
                 <div class="image-container"><img src="FunnyMatch.png" alt="Funny Match" loading="lazy" decoding="async"></div>
                 <div class="game-info">
                     <h2 class="game-title" data-i18n="funny.title">🎯 Funny Match</h2>
@@ -810,7 +834,7 @@
                 </div>
             </div>
 
-            <div class="game-card" data-game-id="ocean">
+            <div class="game-card" data-game-id="ocean" data-added-order="7000">
                 <div class="image-container"><img src="OceanBlast.png" alt="OceanBlast" loading="lazy" decoding="async"></div>
                 <div class="game-info">
                     <h2 class="game-title" data-i18n="ocean.title">👑 OceanBlast</h2>
@@ -831,7 +855,7 @@
                 </div>
             </div>
 
-            <div class="game-card" data-game-id="blocksort">
+            <div class="game-card" data-game-id="blocksort" data-added-order="8000">
                 <div class="image-container"><img src="blocksortss.png" alt="Block Sort" loading="lazy" decoding="async"></div>
                 <div class="game-info">
                     <h2 class="game-title" data-i18n="blocksort.title">🧩 Block Sort</h2>
@@ -1093,6 +1117,25 @@
     const statsPanel = document.getElementById('statsPanel');
     const statsToggle = document.getElementById('statsToggle');
     const closeStats = document.getElementById('closeStats');
+    function sortGameCardsByNewest() {
+        const grid = document.querySelector('.games-grid');
+        if (!grid) return;
+        const cards = Array.from(grid.querySelectorAll('.game-card'));
+        const maxExistingOrder = cards.reduce((max, card) => {
+            const value = Number(card.dataset.addedOrder);
+            return Number.isFinite(value) ? Math.max(max, value) : max;
+        }, 0);
+        let nextOrder = maxExistingOrder + 1;
+        cards.forEach(card => {
+            const value = Number(card.dataset.addedOrder);
+            if (!Number.isFinite(value)) {
+                card.dataset.addedOrder = String(nextOrder++);
+            }
+        });
+        cards.sort((a, b) => (Number(b.dataset.addedOrder) || 0) - (Number(a.dataset.addedOrder) || 0));
+        cards.forEach(card => grid.appendChild(card));
+    }
+    sortGameCardsByNewest();
     const gameCards = document.querySelectorAll('.game-card');
     const adminLauncher = document.getElementById('adminLauncher');
     const adminModal = document.getElementById('adminModal');
