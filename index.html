@@ -664,7 +664,7 @@
             <button class="close-modal" onclick="closeVideoModal()" aria-label="Kapat">×</button>
             <h3 class="modal-title" id="modalTitle" data-i18n="modalTitle">Oyun Videosu</h3>
             <div class="video-container">
-                <video id="videoPlayer" preload="metadata" playsinline muted autoplay>
+                <video id="videoPlayer" preload="metadata" playsinline>
                     <source id="videoSource" src="" type="video/mp4">
                     <span data-i18n="videoFallback">Tarayıcınız video etiketini desteklemiyor.</span>
                 </video>
@@ -712,8 +712,8 @@
                     <img src="FDTH.png" alt="Find The Differences" loading="lazy" decoding="async">
                 </div>
                 <div class="game-info">
-                    <h2 class="game-title">Find The Differences</h2>
-                    <p class="game-description">
+                    <h2 class="game-title" data-i18n="finddiff.title">🔍 Find The Differences</h2>
+                    <p class="game-description" data-i18n="finddiff.description">
                         Dikkat ve gozlem becerilerini one cikaran 2D fark bulma oyunu. Iki sahneyi karsilastir, en ince detaylari yakala ve sure dolmadan tum farklari bul. Akici tempo, temiz gorsel dil ve seviyeye gore artan zorluk ile rahat ama odak gerektiren bir deneyim sunar. Bu oyun freelance bir musteri projesi olarak gelistirilmistir; gizlilik sozlesmesi nedeniyle kaynak kodlar paylasilmamaktadir.
                     </p>
                     <div class="game-tags">
@@ -921,10 +921,17 @@
         title.textContent = name;
         source.src = src;
         desc.textContent = description;
+        video.muted = false;
+        video.volume = 1;
         video.load();
         modal.classList.add('active');
         video.play().catch(() => {
-            // Autoplay blocked, user can click play
+            // If unmuted autoplay is blocked, retry muted and let user unmute.
+            video.muted = true;
+            updateMuteButton();
+            video.play().catch(() => {
+                // Playback still blocked, user can tap play.
+            });
         });
         updateMuteButton();
     }
@@ -994,44 +1001,52 @@
     const translations = {
         tr: {
             heroTitle: '🎮 Game Developer Portfolio',
-            heroSubtitle: 'Mobil Oyun Dünyalarında Tutkulu Bir Geliştirici',
+            heroSubtitle: 'Mobil Oyun Dunyalarinda Tutkulu Bir Gelistirici',
             contactEmail: 'Email',
             contactGithub: 'GitHub',
             contactLinkedin: 'LinkedIn',
-            watchVideo: '📹 Videoyu İzle',
+            watchVideo: '📹 Videoyu Izle',
             playGame: '🎮 Oyunu Oyna',
             githubDetails: '📁 GitHub & Detaylar',
             modalTitle: 'Oyun Videosu',
-            videoFallback: 'Tarayıcınız video etiketini desteklemiyor.',
-            footerText: '© 2024 Game Developer Portfolio. Tüm hakları saklıdır.',
-            statsTitle: 'İstatistikler (Local)',
+            videoFallback: 'Tarayiciniz video etiketini desteklemiyor.',
+            footerText: '© 2024 Game Developer Portfolio. Tum haklari saklidir.',
+            statsTitle: 'Istatistikler (Local)',
             totalVisitsLabel: 'Toplam Ziyaret',
-            uniqueVisitorsLabel: 'Tekil Ziyaretçi',
-            todayVisitsLabel: 'Bugünkü Ziyaret',
-            gameClicksLabel: 'Oyun Tıklamaları',
+            uniqueVisitorsLabel: 'Tekil Ziyaretci',
+            todayVisitsLabel: 'Bugunku Ziyaret',
+            gameClicksLabel: 'Oyun Tiklamalari',
             royal: {
-                title: '👑 Royal Match Clone',
-                description: 'Kraliyet temalı match-3 puzzle oyunu. Renkli taşları eşleştirerek odaları yenileyin, kombinasyonlar yaparak güçlü roketler ve bombalar oluşturun. Her seviyede farklı hedefler ve engellerle dolu stratejik bir deneyim.'
+                title: '💎 Royal Match Clone',
+                description: 'Kraliyet temali match-3 puzzle oyunu. Renkli taslari eslestirerek odalari yenileyin, kombinasyonlarla guclu roketler ve bombalar olusturun. Her seviyede farkli hedefler ve engellerle stratejik bir deneyim sunar.'
             },
             blast: {
                 title: '💥 This is Blast Clone',
-                description: 'Patlayıcı eğlence! Aynı renkteki blokları dokunarak patlatın, büyük gruplar oluşturup özel güçler kazanın. Stratejik hamle planlaması gerektiren, hızlı ve bağımlılık yapan bir tap-to-blast deneyimi.'
+                description: 'Patlayici eglence! Ayni renkteki bloklari dokunarak patlatin, buyuk gruplar olusturup ozel gucler kazanin. Stratejik hamle planlamasi isteyen hizli ve bagimlilik yapan bir tap-to-blast deneyimi.'
             },
             dino: {
                 title: '🦖 Dino Run',
-                description: 'Yüksek hızlı sonsuz koşu macerası! Dinozorunu kontrol et, engellerin üzerinden atla, sürat art ve maksimum mesafeye ulaşmaya çalış. Dinamik zorluk sistemi ve çeşitli engel tipleriyle arcade aksiyonu.'
+                description: 'Yuksek hizli sonsuz kosu macerasi. Dinozorunu kontrol et, engellerin uzerinden atla, surekli hizlan ve maksimum mesafeye ulasmaya calis. Dinamik zorluk sistemiyle arcade aksiyonu sunar.'
             },
             flip: {
                 title: '🔄 Flip It',
-                description: 'Zeka ve refleks testi! Kartları çevir, desenleri eşleştir ve hafıza becerilerini geliştir. Zamana karşı yarışırken doğru kombinasyonları bul. Artan zorluk seviyeleri ve çeşitli oyun modları.'
+                description: 'Zeka ve refleks testi. Kartlari cevir, desenleri eslestir ve hafiza becerilerini gelistir. Zamana karsi yarista dogru kombinasyonlari bul ve zorluk seviyesi artan bolumleri tamamla.'
             },
             funny: {
                 title: '🎯 Funny Match',
-                description: 'Neşeli karakterlerle dolu match-3 mekaniği! Eğlenceli animasyonlar, renkli grafikler ve özel güç kombinasyonlarıyla kasvetli olmayan bir puzzle deneyimi. Her seviye farklı hedefler ve zorluklar sunuyor.'
+                description: 'Neseli karakterlerle dolu match-3 mekanigi. Eglenceli animasyonlar, renkli grafikler ve ozel guc kombinasyonlariyla rahat bir puzzle deneyimi sunar.'
             },
             ocean: {
-                title: '👑 OceanBlast',
-                description: 'Patlayıcı eğlence bu kez okyanusta! Aynı renkteki kabarcıkları dokunarak patlat, büyük kümelerle deniz kabuğu roketi ve bomba güçlendiricileri aç, akıntıları ve kilitli blokları akıllı hamlelerle aş.'
+                title: '💎 OceanBlast',
+                description: 'Patlayici eglence bu kez okyanusta. Ayni renkteki kabarciklari patlat, buyuk kumelerle guclendiricileri ac ve akintilarla kilitli bloklari akilli hamlelerle as.'
+            },
+            blocksort: {
+                title: '🧩 Block Sort',
+                description: 'Bloklari akillica eslestirerek temizle. Renkleri dogru sirala, zincirleme reaksiyonlar olustur ve her bolumde daha verimli hamlelerle hedefe ulas.'
+            },
+            finddiff: {
+                title: '🔍 Find The Differences',
+                description: 'Dikkat ve gozlem becerilerini one cikaran 2D fark bulma oyunu. Iki sahneyi karsilastir, en ince detaylari yakala ve sure dolmadan tum farklari bul. Bu oyun freelance bir musteri projesi olarak gelistirilmistir; gizlilik sozlesmesi nedeniyle kaynak kodlar paylasilmamaktadir.'
             }
         },
         en: {
@@ -1052,28 +1067,36 @@
             todayVisitsLabel: 'Visits Today',
             gameClicksLabel: 'Game Clicks',
             royal: {
-                title: '👑 Royal Match Clone',
-                description: 'Royal-themed match-3 puzzle adventure. Match colorful tiles to renew rooms, craft powerful rockets and bombs through combos, and face varied goals and obstacles each level.'
+                title: '💎 Royal Match Clone',
+                description: 'Royal-themed match-3 puzzle adventure. Match colorful tiles, create strong boosters, and complete varied level goals with smart planning.'
             },
             blast: {
                 title: '💥 This is Blast Clone',
-                description: 'Explosive fun! Tap to pop blocks of the same color, build big groups to unlock special powers, and enjoy a fast, addictive tap-to-blast experience that rewards smart planning.'
+                description: 'Explosive fun! Tap same-colored blocks, build large groups, and unlock special powers in a fast and addictive tap-to-blast experience.'
             },
             dino: {
                 title: '🦖 Dino Run',
-                description: 'High-speed endless runner! Control your dino, jump over obstacles, speed up, and push for maximum distance. Dynamic difficulty and varied hazards deliver arcade action.'
+                description: 'A high-speed endless runner. Control your dino, jump over obstacles, and push for maximum distance with dynamic arcade pacing.'
             },
             flip: {
                 title: '🔄 Flip It',
-                description: 'Memory and reflex test! Flip cards, match patterns, and sharpen recall. Race the clock to find the right combinations across escalating difficulty and multiple modes.'
+                description: 'A memory and reflex challenge. Flip cards, match patterns, and race the clock through increasingly difficult levels.'
             },
             funny: {
                 title: '🎯 Funny Match',
-                description: 'Cheerful match-3 mechanics with lively characters! Bright visuals, playful animations, and special power combos create a cozy puzzle vibe with unique goals each level.'
+                description: 'Cheerful match-3 gameplay with lively characters, bright visuals, and satisfying special-combo moments.'
             },
             ocean: {
-                title: '👑 OceanBlast',
-                description: 'Explosive ocean fun! Tap to pop same-colored bubbles, build big clusters to unlock shell rockets and bomb boosters, and outsmart currents and locked tiles with smart planning.'
+                title: '💎 OceanBlast',
+                description: 'Explosive ocean puzzle action. Pop same-colored bubbles, unlock boosters with bigger clusters, and outsmart currents and locked tiles.'
+            },
+            blocksort: {
+                title: '🧩 Block Sort',
+                description: 'Sort and clear blocks with smart moves. Match colors, trigger chain reactions, and complete each level with efficient puzzle planning.'
+            },
+            finddiff: {
+                title: '🔍 Find The Differences',
+                description: 'A 2D spot-the-difference game focused on observation and detail. Compare two scenes, catch subtle changes, and find every difference before time runs out. This game was developed as a freelance client project, and source code is not shared due to confidentiality.'
             }
         }
     };
