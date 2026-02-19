@@ -388,6 +388,7 @@
 
         .play-button { background: linear-gradient(135deg, #667eea, #764ba2); }
         .watch-button { background: linear-gradient(135deg, #ff6b6b, #ee5a6f); }
+        .play-store-button { background: linear-gradient(135deg, #34a853, #0f9d58); }
         .github-button { background: rgba(78,205,196,0.15); color: var(--accent); border: 2px solid var(--accent); }
 
         .action-button:hover {
@@ -707,6 +708,29 @@
 
     <div class="container">
         <div class="games-grid">
+            <div class="game-card" data-game-id="fillblock" data-added-order="10000">
+                <div class="image-container">
+                    <img src="../FTB.png" alt="Fill The Block" loading="lazy" decoding="async">
+                </div>
+                <div class="game-info">
+                    <h2 class="game-title" data-i18n="fillblock.title">&#129521; Fill The Block</h2>
+                    <p class="game-description" data-i18n="fillblock.description">
+                        Fill The Block, temiz ve akici bir puzzle deneyimi sunan, planlama odakli bir mobil oyun. Oyuncu her bolumde bloklari en dogru sirayla yerlestirerek tahtayi tamamen doldurur; seviye ilerledikce engeller, hareket alani ve karar baskisi artar. Kisa oturumlarda oynanabilir yapisi ve tatmin edici bolum akisiyla tekrar oynanabilirligi yuksek bir deneyim sunar.
+                    </p>
+                    <div class="game-tags">
+                        <span class="tag">Unity</span><span class="tag">C#</span><span class="tag">Puzzle</span><span class="tag">Mobile</span><span class="tag">Casual</span>
+                    </div>
+                    <div class="vote-bar" data-game-id="fillblock">
+                        <button class="vote-button like" data-vote="like" aria-label="Begen"><span class="vote-icon">&#128077;</span><span class="vote-count" data-count="like">0</span></button>
+                        <button class="vote-button dislike" data-vote="dislike" aria-label="Begenmedim"><span class="vote-icon">&#128078;</span><span class="vote-count" data-count="dislike">0</span></button>
+                    </div>
+                    <div class="game-actions">
+                        <button class="action-button watch-button" onclick="openVideoModal('Fill The Block', '../Movie_019.mp4')" data-i18n="watchVideo">Videoyu Izle</button>
+                        <button class="action-button play-store-button" type="button" onclick="showPlayStorePending()" data-i18n="googlePlayStore">Google Play Store</button>
+                    </div>
+                </div>
+            </div>
+
             <div class="game-card" data-game-id="finddiff" data-added-order="9000">
                 <div class="image-container">
                     <img src="FDTH.png" alt="Find The Differences" loading="lazy" decoding="async">
@@ -935,6 +959,13 @@
         });
         updateMuteButton();
     }
+    function showPlayStorePending() {
+        const lang = localStorage.getItem('portfolioLang') || 'tr';
+        const message = (translations[lang] && translations[lang].playStorePending)
+            || (translations.tr && translations.tr.playStorePending)
+            || 'Bu oyun \u015Fu an yay\u0131nlanma s\u00FCrecinde.';
+        alert(message);
+    }
     function toggleMute() {
         const video = document.getElementById('videoPlayer');
         video.muted = !video.muted;
@@ -1007,8 +1038,10 @@
             contactLinkedin: 'LinkedIn',
             watchVideo: '📹 Videoyu Izle',
             playGame: '🎮 Oyunu Oyna',
+            googlePlayStore: 'Google Play Store',
             githubDetails: '📁 GitHub & Detaylar',
             modalTitle: 'Oyun Videosu',
+            playStorePending: 'Bu oyun \u015Fu an yay\u0131nlanma s\u00FCrecinde.',
             videoFallback: 'Tarayiciniz video etiketini desteklemiyor.',
             footerText: '© 2024 Game Developer Portfolio. Tum haklari saklidir.',
             statsTitle: 'Istatistikler (Local)',
@@ -1044,6 +1077,10 @@
                 title: '🧩 Block Sort',
                 description: 'Bloklari akillica eslestirerek temizle. Renkleri dogru sirala, zincirleme reaksiyonlar olustur ve her bolumde daha verimli hamlelerle hedefe ulas.'
             },
+            fillblock: {
+                title: '\uD83E\uDDF1 Fill The Block',
+                description: 'Fill The Block, temiz ve akici bir puzzle deneyimi sunan, planlama odakli bir mobil oyun. Oyuncu her bolumde bloklari en dogru sirayla yerlestirerek tahtayi tamamen doldurur; seviye ilerledikce engeller, hareket alani ve karar baskisi artar. Kisa oturumlarda oynanabilir yapisi ve tatmin edici bolum akisiyla tekrar oynanabilirligi yuksek bir deneyim sunar.'
+            },
             finddiff: {
                 title: '🔍 Find The Differences',
                 description: 'Dikkat ve gozlem becerilerini one cikaran 2D fark bulma oyunu. Iki sahneyi karsilastir, en ince detaylari yakala ve sure dolmadan tum farklari bul. Bu oyun freelance bir musteri projesi olarak gelistirilmistir; gizlilik sozlesmesi nedeniyle kaynak kodlar paylasilmamaktadir.'
@@ -1057,8 +1094,10 @@
             contactLinkedin: 'LinkedIn',
             watchVideo: '📹 Watch Video',
             playGame: '🎮 Play Game',
+            googlePlayStore: 'Google Play Store',
             githubDetails: '📁 GitHub & Details',
             modalTitle: 'Game Video',
+            playStorePending: 'This game is currently in the publishing process.',
             videoFallback: 'Your browser does not support the video tag.',
             footerText: '© 2024 Game Developer Portfolio. All rights reserved.',
             statsTitle: 'Stats (Local Only)',
@@ -1093,6 +1132,10 @@
             blocksort: {
                 title: '🧩 Block Sort',
                 description: 'Sort and clear blocks with smart moves. Match colors, trigger chain reactions, and complete each level with efficient puzzle planning.'
+            },
+            fillblock: {
+                title: '\uD83E\uDDF1 Fill The Block',
+                description: 'Fill The Block is a clean, flow-focused mobile puzzle game built around smart placement decisions. In each level, players place pieces in the right sequence to fill the board completely; as progress increases, blockers, limited space, and decision pressure raise the challenge. Its short-session structure and satisfying level pacing make it highly replayable.'
             },
             finddiff: {
                 title: '🔍 Find The Differences',
