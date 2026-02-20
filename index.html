@@ -708,7 +708,7 @@
         <div class="publish-modal-content">
             <button class="close-modal" type="button" onclick="closePublishModal()" aria-label="Kapat">&times;</button>
             <h3 class="modal-title" data-i18n="publishTitle">Google Play Durumu</h3>
-            <p class="publish-status-text" id="publishStatusText" data-i18n="publishStatus">Bu oyun şu an yayın aşamasında.</p>
+            <p class="publish-status-text" id="publishStatusText" data-i18n="publishStatus">Oyun yayın aşamasında.</p>
         </div>
     </div>
 
@@ -886,29 +886,29 @@
                 <!-- Oyun 3 -->
                 <div class="game-card">
                     <div class="image-container">
-                        <img src="DinoRun.png" alt="Dino Run">
+                        <img src="../Funny.png" alt="Funny Match">
                     </div>
                     <div class="game-info">
-                        <h2 class="game-title" data-i18n="dinoTitle">🦖 Dino Run</h2>
-                        <p class="game-description" data-i18n="dinoDescription">
-                            Yüksek hızlı sonsuz koşu macerası! Dinozorunu kontrol et, engellerin üzerinden atla, sürat art ve maksimum mesafeye ulaşmaya çalış. Dinamik zorluk sistemi ve çeşitli engel tipleriyle arcade aksiyonu.
+                        <h2 class="game-title" data-i18n="funnyTitle">🎯 Funny Match</h2>
+                        <p class="game-description" data-i18n="funnyDescription">
+                            Neşeli karakterlerle dolu match-2 mekaniği! Eğlenceli animasyonlar, renkli grafikler ve özel güç kombinasyonlarıyla kasvetli olmayan bir puzzle deneyimi. Her seviye farklı hedefler ve zorluklar sunuyor.
                         </p>
                         <div class="game-tags">
                             <span class="tag">Unity</span>
                             <span class="tag">C#</span>
-                            <span class="tag">Endless Runner</span>
-                            <span class="tag">Arcade</span>
-                            <span class="tag">Hyper-Casual</span>
+                            <span class="tag">Match-2</span>
+                            <span class="tag">Casual</span>
+                            <span class="tag">Family Friendly</span>
                         </div>
                         <div class="game-actions">
-                            <a href="https://frknsngl.itch.io/dino-run-dino" class="action-button play-button">
-                                <span>🎮</span>
-                                <span>Oyunu Oyna</span>
-                            </a>
-                            <a href="https://github.com/eFurkanSngl/Dino-Run-Game" target="_blank" class="action-button github-button">
-                                <span>📁</span>
-                                <span>GitHub & Detaylar</span>
-                            </a>
+                            <button class="action-button watch-button" onclick="openVideoModal('Funny Match', '../Funny Match.mp4')">
+                                <span>📹</span>
+                                <span>Videoyu İzle</span>
+                            </button>
+                            <button class="action-button play-store-button" type="button" onclick="showPlayStorePending()">
+                                <span>📱</span>
+                                <span>Google Play Store</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -946,26 +946,26 @@
                 <!-- Oyun 5 -->
                 <div class="game-card">
                     <div class="image-container">
-                        <img src="FunnyMatch.png" alt="Space Adventure">
+                        <img src="DinoRun.png" alt="Dino Run">
                     </div>
                     <div class="game-info">
-                        <h2 class="game-title" data-i18n="funnyTitle">🎯 Funny Match</h2>
-                        <p class="game-description" data-i18n="funnyDescription">
-                            Neşeli karakterlerle dolu match-2 mekaniği! Eğlenceli animasyonlar, renkli grafikler ve özel güç kombinasyonlarıyla kasvetli olmayan bir puzzle deneyimi. Her seviye farklı hedefler ve zorluklar sunuyor.
+                        <h2 class="game-title" data-i18n="dinoTitle">🦖 Dino Run</h2>
+                        <p class="game-description" data-i18n="dinoDescription">
+                            Yüksek hızlı sonsuz koşu macerası! Dinozorunu kontrol et, engellerin üzerinden atla, sürat art ve maksimum mesafeye ulaşmaya çalış. Dinamik zorluk sistemi ve çeşitli engel tipleriyle arcade aksiyonu.
                         </p>
                         <div class="game-tags">
                             <span class="tag">Unity</span>
                             <span class="tag">C#</span>
-                            <span class="tag">Match-2</span>
-                            <span class="tag">Casual</span>
-                            <span class="tag">Family Friendly</span>
+                            <span class="tag">Endless Runner</span>
+                            <span class="tag">Arcade</span>
+                            <span class="tag">Hyper-Casual</span>
                         </div>
                         <div class="game-actions">
-                            <a href="https://frknsngl.itch.io/funny-match3" class="action-button play-button">
+                            <a href="https://frknsngl.itch.io/dino-run-dino" class="action-button play-button">
                                 <span>🎮</span>
                                 <span>Oyunu Oyna</span>
                             </a>
-                            <a href="https://github.com/eFurkanSngl/FunnyMatchThree" target="_blank" class="action-button github-button">
+                            <a href="https://github.com/eFurkanSngl/Dino-Run-Game" target="_blank" class="action-button github-button">
                                 <span>📁</span>
                                 <span>GitHub & Detaylar</span>
                             </a>
@@ -1064,7 +1064,7 @@
             oceanTitle: '👑 OceanBlast',
             oceanDescription: 'Kraliyet temalı match-3 puzzle oyunu. Renkli taşları eşleştirerek odaları yenileyin, kombinasyonlar yaparak güçlü roketler ve bombalar oluşturun. Her seviyede farklı hedefler ve engellerle dolu stratejik bir deneyim.',
             publishTitle: 'Google Play Durumu',
-            publishStatus: 'Bu oyun şu an yayın aşamasında.',
+            publishStatus: 'Oyun yayın aşamasında.',
             footerText: '© 2024 Game Developer Portfolio. Tüm hakları saklıdır.'
         },
         en: {
