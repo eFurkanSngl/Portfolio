@@ -736,6 +736,10 @@
                     <span class="icon">💼</span>
                     <span data-i18n="contactLinkedin">LinkedIn</span>
                 </a>
+                <a href="https://play.google.com/store/apps" target="_blank" class="contact-item">
+                    <span class="icon">🛍️</span>
+                    <span>Google Play</span>
+                </a>
             </div>
         </header>
 
@@ -759,10 +763,10 @@
                             <span class="tag">Casual</span>
                         </div>
                         <div class="game-actions">
-                            <button class="action-button watch-button" onclick="openVideoModal('Fill The Block', 'Movie_019.mp4')">
-                                <span>📹</span>
-                                <span>Videoyu İzle</span>
-                            </button>
+                            <a href="https://mellifluous-faloodeh-fbbf29.netlify.app/#game" target="_blank" class="action-button play-button">
+                                <span>🌐</span>
+                                <span>oyunun sayfasına git</span>
+                            </a>
                             <button class="action-button play-store-button" type="button" onclick="showPlayStorePending()">
                                 <span>📱</span>
                                 <span>Google Play Store</span>
@@ -933,7 +937,7 @@
                         <div class="game-actions">
                             <a href=" https://frknsngl.itch.io/flip-it" class="action-button play-button">
                                 <span>🎮</span>
-                                <span>Oyunu Oyna</span>
+                                <span>oyunun sayfasına git</span>
                             </a>
                             <a href="https://github.com/eFurkanSngl/FlipIt-" target="_blank" class="action-button github-button">
                                 <span>📁</span>
@@ -963,7 +967,7 @@
                         <div class="game-actions">
                             <a href="https://frknsngl.itch.io/dino-run-dino" class="action-button play-button">
                                 <span>🎮</span>
-                                <span>Oyunu Oyna</span>
+                                <span>oyunun sayfasına git</span>
                             </a>
                             <a href="https://github.com/eFurkanSngl/Dino-Run-Game" target="_blank" class="action-button github-button">
                                 <span>📁</span>
@@ -1116,7 +1120,7 @@
             el.textContent = lang === 'tr' ? 'Videoyu İzle' : 'Watch Video';
         });
         document.querySelectorAll('.play-button span:last-child').forEach(el => {
-            el.textContent = lang === 'tr' ? 'Oyunu Oyna' : 'Play Game';
+            el.textContent = lang === 'tr' ? 'oyunun sayfasına git' : 'Go to game page';
         });
         document.querySelectorAll('.github-button span:last-child').forEach(el => {
             el.textContent = lang === 'tr' ? 'GitHub & Detaylar' : 'GitHub & Details';
