@@ -302,14 +302,16 @@
             background: #000;
         }
 
-        .image-container img {
+        .image-container img,
+        .image-container video {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: transform 0.4s ease;
         }
 
-        .game-card:hover .image-container img {
+        .game-card:hover .image-container img,
+        .game-card:hover .image-container video {
             transform: scale(1.1);
         }
 
@@ -715,7 +717,7 @@
         <div class="publish-modal-content">
             <button class="close-modal" type="button" onclick="closePublishModal()" aria-label="Kapat">&times;</button>
             <h3 class="modal-title" data-i18n="publishTitle">Google Play Durumu</h3>
-            <p class="publish-status-text" id="publishStatusText" data-i18n="publishStatus">Oyun yayın aşamasında.</p>
+            <p class="publish-status-text" id="publishStatusText" data-i18n="publishStatus">Yapım aşamasında.</p>
         </div>
     </div>
 
@@ -756,6 +758,39 @@
 
         <div class="container">
             <div class="games-grid">
+                <!-- Oyun Yeni 0 -->
+                <div class="game-card">
+                    <div class="image-container">
+                        <video autoplay muted loop playsinline>
+                            <source src="Movie_002.webm" type="video/webm">
+                            Tarayıcınız video etiketini desteklemiyor.
+                        </video>
+                    </div>
+                    <div class="game-info">
+                        <h2 class="game-title" data-i18n="colorblastTitle">💣 Color Blast Match</h2>
+                        <p class="game-description" data-i18n="colorblastDescription">
+                            Color Blast Match şu anda prototip aşamasında olan ve aktif olarak geliştirilen bir match puzzle mobil oyunudur. Oynanış akışı, level dengesi ve görsel kalite sürekli iyileştirilmektedir. Geliştirme süreci tamamlandıktan sonra Google Play üzerinde yayınlanması planlanmaktadır.
+                        </p>
+                        <div class="game-tags">
+                            <span class="tag">Unity</span>
+                            <span class="tag">C#</span>
+                            <span class="tag">Match Puzzle</span>
+                            <span class="tag">Mobile</span>
+                            <span class="tag">Prototype</span>
+                        </div>
+                        <div class="game-actions">
+                            <button class="action-button watch-button" onclick="openVideoModal('Color Blast Match', 'Movie_002.webm')">
+                                <span>📹</span>
+                                <span>Videoyu İzle</span>
+                            </button>
+                            <button class="action-button play-store-button" type="button" onclick="showPlayStorePending()">
+                                <span>📱</span>
+                                <span>Google Play</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Oyun Yeni -->
                 <div class="game-card">
                     <div class="image-container">
@@ -1086,6 +1121,8 @@
             contactEmail: 'Email',
             contactGithub: 'GitHub',
             contactLinkedin: 'LinkedIn',
+            colorblastTitle: '💣 Color Blast Match',
+            colorblastDescription: 'Color Blast Match şu anda prototip aşamasında olan ve aktif olarak geliştirilen bir match puzzle mobil oyunudur. Oynanış akışı, level dengesi ve görsel kalite sürekli iyileştirilmektedir. Geliştirme süreci tamamlandıktan sonra Google Play üzerinde yayınlanması planlanmaktadır.',
             levelgenTitle: '🛠️ Level Generator',
             levelgenDescription: 'Color Blast Match Level Generator, Unity Editor içinde çalışan ve seviye üretim sürecini hızlandıran özel bir geliştirme aracıdır. Grid üzerinde hücre ve obstacle yerleşimini görsel olarak düzenleyip tek tıkla level prefab ile level data üretilmesini sağlar. Prototipleme ve içerik üretimi sürecini kısaltarak daha tutarlı level tasarımı sunar.',
             fillblockTitle: '🧱 Fill The Block',
@@ -1107,7 +1144,7 @@
             oceanTitle: '👑 OceanBlast',
             oceanDescription: 'Kraliyet temalı match-3 puzzle oyunu. Renkli taşları eşleştirerek odaları yenileyin, kombinasyonlar yaparak güçlü roketler ve bombalar oluşturun. Her seviyede farklı hedefler ve engellerle dolu stratejik bir deneyim.',
             publishTitle: 'Google Play Durumu',
-            publishStatus: 'Oyun yayın aşamasında.',
+            publishStatus: 'Yapım aşamasında.',
             footerText: '© 2024 Game Developer Portfolio. Tüm hakları saklıdır.'
         },
         en: {
@@ -1116,6 +1153,8 @@
             contactEmail: 'Email',
             contactGithub: 'GitHub',
             contactLinkedin: 'LinkedIn',
+            colorblastTitle: '💣 Color Blast Match',
+            colorblastDescription: 'Color Blast Match is currently a prototype and is actively being developed as a mobile match puzzle game. Gameplay flow, level balance, and visual quality are being improved continuously. It is planned to be released on Google Play after development is completed.',
             levelgenTitle: '🛠️ Level Generator',
             levelgenDescription: 'Color Blast Match Level Generator is a custom Unity Editor tool that accelerates level production. It provides visual cell and obstacle placement on a grid, then generates level prefabs and level data with a single click. This workflow shortens prototyping and content production time while keeping level design more consistent.',
             fillblockTitle: '🧱 Fill The Block',
@@ -1137,7 +1176,7 @@
             oceanTitle: '👑 OceanBlast',
             oceanDescription: 'A royal-themed match-3 style puzzle set in an oceanic world. Match colorful pieces, trigger powerful combo effects, and complete strategic levels with different objectives and blockers.',
             publishTitle: 'Google Play Status',
-            publishStatus: 'This game is currently in the publishing process.',
+            publishStatus: 'In development.',
             footerText: '© 2024 Game Developer Portfolio. All rights reserved.'
         }
     };
@@ -1174,9 +1213,11 @@
         const title = document.getElementById('modalTitle');
         const videoPlayer = document.getElementById('videoPlayer');
         const videoSource = document.getElementById('videoSource');
+        const lowerPath = (videoPath || '').toLowerCase();
         
         title.textContent = gameName;
         videoSource.src = videoPath;
+        videoSource.type = lowerPath.endsWith('.webm') ? 'video/webm' : 'video/mp4';
         videoPlayer.load();
         modal.classList.add('active');
         videoPlayer.play();
