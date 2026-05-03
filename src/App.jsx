@@ -371,7 +371,7 @@ const projectOrder = [
 ];
 
 function asset(name) {
-  return `/${encodeURI(name)}`;
+  return `${import.meta.env.BASE_URL}${encodeURI(name)}`;
 }
 
 function App() {
