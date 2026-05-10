@@ -173,8 +173,8 @@ const projects = [
       en: "A match puzzle prototype with active work on level balance, visual quality, mobile game feel and release-ready systems.",
     },
     image: "Funny.png",
-    previewVideo: "Movie_015.mp4",
-    video: "Movie_015.mp4",
+    previewVideo: "ColorBlastMatchHero.mp4",
+    video: "ColorBlastMatchHero.mp4",
     tags: ["Unity", "C#", "Match Puzzle", "Mobile"],
     category: "Puzzle",
     accent: "#23d3b2",
@@ -452,8 +452,8 @@ function App() {
 
         <div className="hero-stage" aria-label={t.featuredTitle}>
           <div className="hero-stage__phone">
-            <video autoPlay muted loop playsInline poster={asset("ThisIsBlast.png")}>
-              <source src={asset("Movie_015.mp4")} type="video/mp4" />
+            <video autoPlay muted loop playsInline poster={asset("Funny.png")}>
+              <source src={asset("ColorBlastMatchHero.mp4")} type="video/mp4" />
             </video>
           </div>
           <div className="hero-stage__panel">
