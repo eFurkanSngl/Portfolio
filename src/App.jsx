@@ -237,6 +237,8 @@ const projects = [
     tags: ["Unity", "C#", "AI Flow", "Client"],
     category: "Client",
     accent: "#5cc8ff",
+    googlePlay:
+      "https://play.google.com/store/apps/details?id=com.drawtopia.doubletake",
   },
   {
     id: "block-sort",
