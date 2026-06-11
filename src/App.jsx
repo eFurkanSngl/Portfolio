@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Award,
   BriefcaseBusiness,
+  ChevronLeft,
+  ChevronRight,
   CheckCircle2,
   Code2,
   Cpu,
@@ -70,6 +72,8 @@ const copy = {
       "Fill The Block Google Play üzerinde konumlandırılan mobil puzzle projesi. Android optimizasyonu, SDK entegrasyonu, Firebase Analytics, reklam altyapısı, performans ve mağaza beklentileri ürün akışının parçası.",
     playCta: "Google Play sayfası",
     playWebsite: "Oyun websitesi",
+    playPrev: "Önceki oyun",
+    playNext: "Sonraki oyun",
     playCards: [
       ["Fill The Block", "Google Play yayında / yayın akışı hazır"],
       ["Android Pipeline", "SDK, Firebase Analytics, reklam ve build akışı"],
@@ -138,6 +142,8 @@ const copy = {
       "Fill The Block is the mobile puzzle project positioned on Google Play. Android optimization, SDK integration, Firebase Analytics, ad foundations, performance and store expectations are part of the product flow.",
     playCta: "Google Play page",
     playWebsite: "Game website",
+    playPrev: "Previous game",
+    playNext: "Next game",
     playCards: [
       ["Fill The Block", "Published / release flow ready"],
       ["Android Pipeline", "SDK, Firebase Analytics, ads and build flow"],
@@ -226,7 +232,7 @@ const projects = [
   },
   {
     id: "find-the-differences",
-    title: "Find The Differences",
+    title: "DoubleTake",
     status: { tr: "Freelance client işi", en: "Freelance client work" },
     description: {
       tr: "AI kişiselleştirme akışı olan 2D fark bulma oyunu. Difference detection, hint/lives sistemi, player progression, coin economy ve IAP-ready store yapısı geliştirildi.",
@@ -346,6 +352,54 @@ const projects = [
   },
 ];
 
+const googlePlayProjects = [
+  {
+    id: "fill-the-block",
+    title: "Fill The Block",
+    image: "FTB.png",
+    description: {
+      tr: "Fill The Block Google Play uzerinde konumlandirilan mobil puzzle projesi. Android optimizasyonu, SDK entegrasyonu, Firebase Analytics, reklam altyapisi, performans ve magaza beklentileri urun akisinin parcasi.",
+      en: "Fill The Block is the mobile puzzle project positioned on Google Play. Android optimization, SDK integration, Firebase Analytics, ad foundations, performance and store expectations are part of the product flow.",
+    },
+    cards: {
+      tr: [
+        ["Fill The Block", "Google Play yayinda / yayin akisi hazir"],
+        ["Android Pipeline", "SDK, Firebase Analytics, reklam ve build akisi"],
+        ["Store Ready Polish", "Haptic, audio, particle pooling ve mobil UI"],
+      ],
+      en: [
+        ["Fill The Block", "Published / release flow ready"],
+        ["Android Pipeline", "SDK, Firebase Analytics, ads and build flow"],
+        ["Store Ready Polish", "Haptics, audio, particle pooling and mobile UI"],
+      ],
+    },
+    googlePlay: "https://play.google.com/store/apps/details?id=com.SGLGAMES.FillTheBlocks",
+    website: "https://mellifluous-faloodeh-fbbf29.netlify.app/",
+  },
+  {
+    id: "doubletake",
+    title: "DoubleTake",
+    image: "FDTH.png",
+    description: {
+      tr: "DoubleTake, dikkat ve gozlem odakli mobil fark bulma oyunu. Yapay zeka destekli icerik akisiyla seviye cesitliligi, progression ve monetization taraflarinda gelistirme suruyor.",
+      en: "DoubleTake is a mobile spot-the-difference game focused on attention and observation. Development continues on AI-assisted content flow, level variety, progression and monetization.",
+    },
+    cards: {
+      tr: [
+        ["DoubleTake", "Google Play yayininda"],
+        ["Core Gameplay", "Difference detection, hint/lives sistemi"],
+        ["Progression", "Coin economy, level flow ve IAP-ready store"],
+      ],
+      en: [
+        ["DoubleTake", "Published on Google Play"],
+        ["Core Gameplay", "Difference detection and hint/lives systems"],
+        ["Progression", "Coin economy, level flow and IAP-ready store"],
+      ],
+    },
+    googlePlay: "https://play.google.com/store/apps/details?id=com.drawtopia.doubletake",
+  },
+];
+
 const focusItems = [
   {
     icon: Layers3,
@@ -397,6 +451,7 @@ function App() {
   const [activeFilter, setActiveFilter] = useState("All");
   const [video, setVideo] = useState(null);
   const [pendingOpen, setPendingOpen] = useState(false);
+  const [playIndex, setPlayIndex] = useState(0);
   const t = copy[lang];
 
   useEffect(() => {
@@ -418,6 +473,14 @@ function App() {
       (first, second) => projectOrder.indexOf(first.id) - projectOrder.indexOf(second.id),
     );
   }, [activeFilter]);
+
+  const activePlayProject = googlePlayProjects[playIndex];
+  const onPrevPlay = () => {
+    setPlayIndex((current) => (current - 1 + googlePlayProjects.length) % googlePlayProjects.length);
+  };
+  const onNextPlay = () => {
+    setPlayIndex((current) => (current + 1) % googlePlayProjects.length);
+  };
 
   return (
     <main className="site-shell">
@@ -495,18 +558,25 @@ function App() {
 
       <section className="google-play" id="google-play">
         <div className="google-play__media">
-          <img src={asset("FTB.png")} alt="Fill The Block" />
+          <img src={asset(activePlayProject.image)} alt={activePlayProject.title} />
           <div className="store-badge">
             <Store size={18} />
             Google Play
           </div>
+          <button className="play-nav play-nav--prev" type="button" onClick={onPrevPlay} aria-label={t.playPrev}>
+            <ChevronLeft size={18} />
+          </button>
+          <button className="play-nav play-nav--next" type="button" onClick={onNextPlay} aria-label={t.playNext}>
+            <ChevronRight size={18} />
+          </button>
         </div>
         <div className="google-play__content">
           <Store size={28} />
           <h2>{t.playTitle}</h2>
-          <p>{t.playText}</p>
+          <h3 className="google-play__game-title">{activePlayProject.title}</h3>
+          <p>{activePlayProject.description[lang]}</p>
           <div className="play-card-row">
-            {t.playCards.map(([title, text]) => (
+            {activePlayProject.cards[lang].map(([title, text]) => (
               <div key={title}>
                 <strong>{title}</strong>
                 <span>{text}</span>
@@ -516,22 +586,24 @@ function App() {
           <div className="hero__actions">
             <a
               className="button button--store"
-              href="https://play.google.com/store/apps/details?id=com.SGLGAMES.FillTheBlocks"
+              href={activePlayProject.googlePlay}
               target="_blank"
               rel="noreferrer"
             >
               <Store size={18} />
               {t.playCta}
             </a>
-            <a
-              className="button button--ghost"
-              href="https://mellifluous-faloodeh-fbbf29.netlify.app/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Globe2 size={18} />
-              {t.playWebsite}
-            </a>
+            {activePlayProject.website && (
+              <a
+                className="button button--ghost"
+                href={activePlayProject.website}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Globe2 size={18} />
+                {t.playWebsite}
+              </a>
+            )}
           </div>
         </div>
       </section>
