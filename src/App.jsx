@@ -86,6 +86,7 @@ const copy = {
     watchVideo: "Videoyu izle",
     visitProject: "Projeye git",
     githubDetails: "GitHub & detaylar",
+    technicalDetails: "Teknik Detaylar",
     googlePlay: "Google Play",
     pendingTitle: "Google Play Durumu",
     pendingText: "Bu oyun için Google Play yayını hazırlık aşamasında.",
@@ -156,6 +157,7 @@ const copy = {
     watchVideo: "Watch video",
     visitProject: "Visit project",
     githubDetails: "GitHub & details",
+    technicalDetails: "Technical Details",
     googlePlay: "Google Play",
     pendingTitle: "Google Play Status",
     pendingText: "This game is currently being prepared for Google Play release.",
@@ -348,7 +350,7 @@ const projects = [
     tags: ["Unity", "3D Puzzle", "Zenject", "Grid"],
     category: "Puzzle",
     accent: "#30d5c8",
-    github: "https://github.com/eFurkanSngl/Royal-Match-Clone",
+    github: "https://github.com/eFurkanSngl/OceanBlast",
   },
 ];
 
@@ -444,6 +446,10 @@ const projectOrder = [
 
 function asset(name) {
   return `${import.meta.env.BASE_URL}${encodeURI(name)}`;
+}
+
+function readmeLink(url) {
+  return `${url}#readme`;
 }
 
 function App() {
@@ -798,9 +804,9 @@ function ProjectCard({ lang, onOpenPending, onOpenVideo, project, t }) {
             </button>
           )}
           {project.github && (
-            <a className="icon-button" href={project.github} target="_blank" rel="noreferrer">
-              <Github size={16} />
-              {t.githubDetails}
+            <a className="icon-button" href={readmeLink(project.github)} target="_blank" rel="noreferrer">
+              <Code2 size={16} />
+              {t.technicalDetails}
             </a>
           )}
         </div>
