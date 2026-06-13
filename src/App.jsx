@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   Code2,
   Cpu,
+  Download,
   Gamepad2,
   Github,
   Globe2,
@@ -96,6 +97,7 @@ const copy = {
     contactTitle: "Yeni oyun, prototip veya freelance iş için konuşalım.",
     contactText:
       "Unity tabanlı mobil oyun geliştirme, level tool üretimi veya mevcut prototipleri yayınlanabilir seviyeye taşıma konusunda yardımcı olabilirim.",
+    cvDownload: "CV indir",
     footer: "© 2026 Furkan Şengül. Game Developer Portfolio.",
   },
   en: {
@@ -167,6 +169,7 @@ const copy = {
     contactTitle: "Let’s talk about a new game, prototype or freelance build.",
     contactText:
       "I can help with Unity-based mobile game development, level tooling or taking an existing prototype closer to release quality.",
+    cvDownload: "Download CV",
     footer: "© 2026 Furkan Şengül. Game Developer Portfolio.",
   },
 };
@@ -510,6 +513,14 @@ function App() {
               <Mail size={18} />
               Email
             </a>
+            <a
+              className="button button--ghost"
+              href={asset("Enes-Furkan-Sengul-CV.pdf")}
+              download="Enes-Furkan-Sengul-CV.pdf"
+            >
+              <Download size={18} />
+              {t.cvDownload}
+            </a>
           </div>
           <dl className="hero__stats">
             {t.stats.map(([value, label]) => (
@@ -716,6 +727,10 @@ function App() {
           <a href="https://www.linkedin.com/in/efurkansengull/" target="_blank" rel="noreferrer">
             <Linkedin size={18} />
             LinkedIn
+          </a>
+          <a href={asset("Enes-Furkan-Sengul-CV.pdf")} download="Enes-Furkan-Sengul-CV.pdf">
+            <Download size={18} />
+            {t.cvDownload}
           </a>
         </div>
       </section>
