@@ -1,13 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  Activity,
   Award,
+  BarChart3,
   BriefcaseBusiness,
   ChevronLeft,
   ChevronRight,
   CheckCircle2,
+  Clock,
   Code2,
   Cpu,
   Download,
+  Eye,
   Gamepad2,
   Github,
   Globe2,
@@ -15,17 +19,27 @@ import {
   Languages,
   Layers3,
   Linkedin,
+  Lock,
   Mail,
+  Monitor,
   Play,
+  RefreshCw,
   Rocket,
   ShieldCheck,
   Smartphone,
   Sparkles,
   Store,
+  Users,
   Wrench,
   X,
   Zap,
 } from "lucide-react";
+import {
+  isAnalyticsConfigured,
+  loadAdminStats,
+  recordPortfolioEvent,
+  recordVisit,
+} from "./lib/portfolioAnalytics";
 
 const copy = {
   tr: {
@@ -98,6 +112,20 @@ const copy = {
     contactText:
       "Unity tabanlı mobil oyun geliştirme, level tool üretimi veya mevcut prototipleri yayınlanabilir seviyeye taşıma konusunda yardımcı olabilirim.",
     cvDownload: "CV indir",
+    adminTitle: "Admin ziyaret paneli",
+    adminSubtitle: "Shift + A ile acilir. Veriler Supabase backend baglantisi aktifse dolar.",
+    adminPassword: "Admin sifresi",
+    adminUnlock: "Paneli ac",
+    adminRefresh: "Yenile",
+    adminToday: "Bugun",
+    adminTotal: "Toplam ziyaret",
+    adminUnique: "Tekil ziyaretci",
+    adminLive: "Son 10 dk aktif",
+    adminRecent: "Son hareketler",
+    adminHourly: "Saatlere gore",
+    adminProjects: "Proje tiklamalari",
+    adminNoData: "Henuz veri yok.",
+    adminNotConfigured: "Analytics endpoint ayari eksik. VITE_STATS_ENDPOINT eklenince panel calisir.",
     footer: "© 2026 Furkan Şengül. Game Developer Portfolio.",
   },
   en: {
@@ -170,6 +198,20 @@ const copy = {
     contactText:
       "I can help with Unity-based mobile game development, level tooling or taking an existing prototype closer to release quality.",
     cvDownload: "Download CV",
+    adminTitle: "Admin visitor panel",
+    adminSubtitle: "Opens with Shift + A. Data appears when the Supabase backend is configured.",
+    adminPassword: "Admin password",
+    adminUnlock: "Unlock panel",
+    adminRefresh: "Refresh",
+    adminToday: "Today",
+    adminTotal: "Total visits",
+    adminUnique: "Unique visitors",
+    adminLive: "Active last 10m",
+    adminRecent: "Recent activity",
+    adminHourly: "By hour",
+    adminProjects: "Project clicks",
+    adminNoData: "No data yet.",
+    adminNotConfigured: "Analytics endpoint is missing. Add VITE_STATS_ENDPOINT to enable the panel.",
     footer: "© 2026 Furkan Şengül. Game Developer Portfolio.",
   },
 };
@@ -461,11 +503,34 @@ function App() {
   const [video, setVideo] = useState(null);
   const [pendingOpen, setPendingOpen] = useState(false);
   const [playIndex, setPlayIndex] = useState(0);
+  const [adminOpen, setAdminOpen] = useState(false);
+  const visitTracked = useRef(false);
   const t = copy[lang];
 
   useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
+
+  useEffect(() => {
+    if (visitTracked.current) {
+      return;
+    }
+
+    visitTracked.current = true;
+    recordVisit();
+  }, []);
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.shiftKey && event.key.toLowerCase() === "a") {
+        event.preventDefault();
+        setAdminOpen(true);
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   const filters = useMemo(
     () => ["All", ...Array.from(new Set(projects.map((project) => project.category)))],
@@ -489,6 +554,10 @@ function App() {
   };
   const onNextPlay = () => {
     setPlayIndex((current) => (current + 1) % googlePlayProjects.length);
+  };
+
+  const trackExternal = (label, projectId = "") => {
+    recordPortfolioEvent("external_click", { label, projectId });
   };
 
   return (
@@ -606,6 +675,7 @@ function App() {
               href={activePlayProject.googlePlay}
               target="_blank"
               rel="noreferrer"
+              onClick={() => trackExternal(`${activePlayProject.title} Google Play`, activePlayProject.id)}
             >
               <Store size={18} />
               {t.playCta}
@@ -616,6 +686,7 @@ function App() {
                 href={activePlayProject.website}
                 target="_blank"
                 rel="noreferrer"
+                onClick={() => trackExternal(`${activePlayProject.title} website`, activePlayProject.id)}
               >
                 <Globe2 size={18} />
                 {t.playWebsite}
@@ -652,8 +723,12 @@ function App() {
               lang={lang}
               project={project}
               t={t}
-              onOpenVideo={() => setVideo(project)}
+              onOpenVideo={() => {
+                recordPortfolioEvent("video_open", { projectId: project.id, label: project.title });
+                setVideo(project);
+              }}
               onOpenPending={() => setPendingOpen(true)}
+              onTrackEvent={recordPortfolioEvent}
             />
           ))}
         </div>
@@ -739,6 +814,7 @@ function App() {
 
       {video && <VideoModal project={video} t={t} onClose={() => setVideo(null)} />}
       {pendingOpen && <PendingModal t={t} onClose={() => setPendingOpen(false)} />}
+      {adminOpen && <AdminModal t={t} onClose={() => setAdminOpen(false)} />}
     </main>
   );
 }
@@ -770,7 +846,11 @@ function Header({ onToggleLang, t }) {
   );
 }
 
-function ProjectCard({ lang, onOpenPending, onOpenVideo, project, t }) {
+function ProjectCard({ lang, onOpenPending, onOpenVideo, onTrackEvent, project, t }) {
+  const trackProjectClick = (label) => {
+    onTrackEvent("project_click", { projectId: project.id, label });
+  };
+
   return (
     <article className="project-card" style={{ "--accent": project.accent }}>
       <div className="project-card__media">
@@ -801,25 +881,50 @@ function ProjectCard({ lang, onOpenPending, onOpenVideo, project, t }) {
             </button>
           )}
           {project.play && (
-            <a className="icon-button" href={project.play} target="_blank" rel="noreferrer">
+            <a
+              className="icon-button"
+              href={project.play}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => trackProjectClick(`${project.title} project`)}
+            >
               <Globe2 size={16} />
               {t.visitProject}
             </a>
           )}
           {project.googlePlay && (
-            <a className="icon-button icon-button--store" href={project.googlePlay} target="_blank" rel="noreferrer">
+            <a
+              className="icon-button icon-button--store"
+              href={project.googlePlay}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => trackProjectClick(`${project.title} Google Play`)}
+            >
               <Store size={16} />
               {t.googlePlay}
             </a>
           )}
           {project.googlePending && (
-            <button className="icon-button icon-button--store" onClick={onOpenPending} type="button">
+            <button
+              className="icon-button icon-button--store"
+              onClick={() => {
+                trackProjectClick(`${project.title} Google Play pending`);
+                onOpenPending();
+              }}
+              type="button"
+            >
               <Store size={16} />
               {t.googlePlay}
             </button>
           )}
           {project.github && (
-            <a className="icon-button" href={readmeLink(project.github)} target="_blank" rel="noreferrer">
+            <a
+              className="icon-button"
+              href={readmeLink(project.github)}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => trackProjectClick(`${project.title} technical details`)}
+            >
               <Code2 size={16} />
               {t.technicalDetails}
             </a>
@@ -881,6 +986,209 @@ function PendingModal({ onClose, t }) {
       </div>
     </div>
   );
+}
+
+function AdminModal({ onClose, t }) {
+  const [password, setPassword] = useState("");
+  const [stats, setStats] = useState(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const configured = isAnalyticsConfigured();
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.body.classList.add("modal-open");
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.classList.remove("modal-open");
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onClose]);
+
+  const fetchStats = async (event) => {
+    event?.preventDefault();
+
+    if (!configured) {
+      setError(t.adminNotConfigured);
+      return;
+    }
+
+    if (!password.trim()) {
+      setError(t.adminPassword);
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      setStats(await loadAdminStats(password));
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="modal" onClick={onClose} role="presentation">
+      <div
+        className="modal__panel modal__panel--admin"
+        onClick={(event) => event.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+      >
+        <button className="modal__close" onClick={onClose} type="button" aria-label="Close admin">
+          <X size={20} />
+        </button>
+
+        <div className="admin-header">
+          <div>
+            <span>
+              <Lock size={16} />
+              Admin
+            </span>
+            <h3>{t.adminTitle}</h3>
+            <p>{t.adminSubtitle}</p>
+          </div>
+          {stats && (
+            <button className="icon-button" disabled={loading} onClick={fetchStats} type="button">
+              <RefreshCw size={16} />
+              {t.adminRefresh}
+            </button>
+          )}
+        </div>
+
+        {!stats ? (
+          <form className="admin-login" onSubmit={fetchStats}>
+            <label>
+              {t.adminPassword}
+              <input
+                autoFocus
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="******"
+              />
+            </label>
+            {error && <p className="admin-error">{error}</p>}
+            <button className="button button--primary" disabled={loading} type="submit">
+              <Lock size={17} />
+              {loading ? "..." : t.adminUnlock}
+            </button>
+          </form>
+        ) : (
+          <AdminDashboard stats={stats} t={t} error={error} loading={loading} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function AdminDashboard({ error, loading, stats, t }) {
+  const statCards = [
+    [t.adminToday, stats.todayVisits, Eye],
+    [t.adminTotal, stats.totalVisits, BarChart3],
+    [t.adminUnique, stats.uniqueVisitors, Users],
+    [t.adminLive, stats.activeVisitors, Activity],
+  ];
+  const projectClicks = Object.entries(stats.projectClicks || {}).sort((a, b) => b[1] - a[1]);
+
+  return (
+    <div className="admin-dashboard" aria-busy={loading}>
+      {error && <p className="admin-error">{error}</p>}
+
+      <div className="admin-stat-grid">
+        {statCards.map(([label, value, Icon]) => (
+          <article key={label}>
+            <Icon size={19} />
+            <strong>{value ?? 0}</strong>
+            <span>{label}</span>
+          </article>
+        ))}
+      </div>
+
+      <div className="admin-columns">
+        <section>
+          <h4>
+            <Clock size={17} />
+            {t.adminRecent}
+          </h4>
+          <div className="admin-table">
+            {(stats.recentEvents || []).length ? (
+              stats.recentEvents.map((event) => (
+                <div key={event.id}>
+                  <span>{formatAdminTime(event.occurred_at)}</span>
+                  <strong>{event.project_id || event.event_type}</strong>
+                  <small>
+                    {event.device_type || "device"} / {event.browser || "browser"}
+                  </small>
+                </div>
+              ))
+            ) : (
+              <p>{t.adminNoData}</p>
+            )}
+          </div>
+        </section>
+
+        <section>
+          <h4>
+            <Monitor size={17} />
+            {t.adminProjects}
+          </h4>
+          <div className="admin-list">
+            {projectClicks.length ? (
+              projectClicks.map(([projectId, count]) => (
+                <div key={projectId}>
+                  <span>{projectId}</span>
+                  <strong>{count}</strong>
+                </div>
+              ))
+            ) : (
+              <p>{t.adminNoData}</p>
+            )}
+          </div>
+
+          <h4>
+            <BarChart3 size={17} />
+            {t.adminHourly}
+          </h4>
+          <div className="admin-list">
+            {(stats.hourly || []).length ? (
+              stats.hourly.slice(0, 12).map((item) => (
+                <div key={item.label}>
+                  <span>{item.label}</span>
+                  <strong>{item.count}</strong>
+                </div>
+              ))
+            ) : (
+              <p>{t.adminNoData}</p>
+            )}
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function formatAdminTime(value) {
+  try {
+    return new Intl.DateTimeFormat("tr-TR", {
+      timeZone: "Europe/Istanbul",
+      day: "2-digit",
+      month: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(value));
+  } catch {
+    return value;
+  }
 }
 
 export default App;
