@@ -584,7 +584,7 @@ function App() {
             </a>
             <a
               className="button button--ghost"
-              href={asset("Enes-Furkan-Sengul-CV-2026-06-15.pdf")}
+              href={asset("Enes-Furkan-Sengul-CV-2026-06-17.pdf")}
               download="Enes-Furkan-Sengul-CV.pdf"
             >
               <Download size={18} />
@@ -803,7 +803,7 @@ function App() {
             <Linkedin size={18} />
             LinkedIn
           </a>
-          <a href={asset("Enes-Furkan-Sengul-CV-2026-06-15.pdf")} download="Enes-Furkan-Sengul-CV.pdf">
+          <a href={asset("Enes-Furkan-Sengul-CV-2026-06-17.pdf")} download="Enes-Furkan-Sengul-CV.pdf">
             <Download size={18} />
             {t.cvDownload}
           </a>
