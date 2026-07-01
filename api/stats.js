@@ -152,7 +152,7 @@ function startOfIstanbulDay() {
   return new Date(`${year}-${month}-${day}T00:00:00+03:00`).toISOString();
 }
 
-function summarizeRecentEvents(recentEvents, uniqueRows, totalVisits, todayVisits) {
+function summarizeRecentEvents(recentEvents, uniqueRows, totalVisits, todayVisits, cvDownloads) {
   const now = Date.now();
   const activeSince = now - 10 * 60 * 1000;
   const activeVisitors = new Set();
@@ -183,6 +183,7 @@ function summarizeRecentEvents(recentEvents, uniqueRows, totalVisits, todayVisit
   return {
     totalVisits,
     todayVisits,
+    cvDownloads,
     uniqueVisitors: new Set(uniqueRows.map((row) => row.visitor_id)).size,
     activeVisitors: activeVisitors.size,
     projectClicks,
@@ -217,6 +218,7 @@ async function admin(env, password) {
   const todayStart = startOfIstanbulDay();
   const totalVisits = await countRows(env, "&event_type=eq.visit");
   const todayVisits = await countRows(env, `&event_type=eq.visit&occurred_at=gte.${encodeURIComponent(todayStart)}`);
+  const cvDownloads = await countRows(env, "&event_type=eq.external_click&project_id=eq.cv-download");
 
   const recent = await supabaseRequest(
     env,
@@ -229,7 +231,7 @@ async function admin(env, password) {
     { method: "GET" },
   );
 
-  return summarizeRecentEvents(recent.body || [], unique.body || [], totalVisits, todayVisits);
+  return summarizeRecentEvents(recent.body || [], unique.body || [], totalVisits, todayVisits, cvDownloads);
 }
 
 export default async function handler(request, response) {

@@ -121,6 +121,7 @@ const copy = {
     adminTotal: "Toplam ziyaret",
     adminUnique: "Tekil ziyaretci",
     adminLive: "Son 10 dk aktif",
+    adminCvDownloads: "CV indir",
     adminRecent: "Son hareketler",
     adminHourly: "Saatlere gore",
     adminProjects: "Proje tiklamalari",
@@ -207,6 +208,7 @@ const copy = {
     adminTotal: "Total visits",
     adminUnique: "Unique visitors",
     adminLive: "Active last 10m",
+    adminCvDownloads: "CV downloads",
     adminRecent: "Recent activity",
     adminHourly: "By hour",
     adminProjects: "Project clicks",
@@ -559,6 +561,9 @@ function App() {
   const trackExternal = (label, projectId = "") => {
     recordPortfolioEvent("external_click", { label, projectId });
   };
+  const trackCvDownload = () => {
+    trackExternal("CV download", "cv-download");
+  };
 
   return (
     <main className="site-shell">
@@ -586,6 +591,7 @@ function App() {
               className="button button--ghost"
               href={asset("Enes-Furkan-Sengul-CV-2026-06-17.pdf")}
               download="Enes-Furkan-Sengul-CV.pdf"
+              onClick={trackCvDownload}
             >
               <Download size={18} />
               {t.cvDownload}
@@ -803,7 +809,11 @@ function App() {
             <Linkedin size={18} />
             LinkedIn
           </a>
-          <a href={asset("Enes-Furkan-Sengul-CV-2026-06-17.pdf")} download="Enes-Furkan-Sengul-CV.pdf">
+          <a
+            href={asset("Enes-Furkan-Sengul-CV-2026-06-17.pdf")}
+            download="Enes-Furkan-Sengul-CV.pdf"
+            onClick={trackCvDownload}
+          >
             <Download size={18} />
             {t.cvDownload}
           </a>
@@ -1097,6 +1107,7 @@ function AdminDashboard({ error, loading, stats, t }) {
     [t.adminTotal, stats.totalVisits, BarChart3],
     [t.adminUnique, stats.uniqueVisitors, Users],
     [t.adminLive, stats.activeVisitors, Activity],
+    [t.adminCvDownloads, stats.cvDownloads, Download],
   ];
   const projectClicks = Object.entries(stats.projectClicks || {}).sort((a, b) => b[1] - a[1]);
 
