@@ -9,7 +9,6 @@ import {
   CheckCircle2,
   Clock,
   Code2,
-  Cpu,
   Download,
   Eye,
   Gamepad2,
@@ -278,6 +277,7 @@ const projects = [
     accent: "#ff6b5f",
     play: "https://mellifluous-faloodeh-fbbf29.netlify.app/#game",
     googlePlay: "https://play.google.com/store/apps/details?id=com.SGLGAMES.FillTheBlocks",
+    featured: true,
   },
   {
     id: "find-the-differences",
@@ -534,6 +534,52 @@ function App() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const ambient = document.querySelector(".ambient");
+    if (prefersReducedMotion || !ambient) {
+      return undefined;
+    }
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ambient.style.transform = `translate3d(0, ${window.scrollY * 0.06}px, 0)`;
+        ticking = false;
+      });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const targets = Array.from(document.querySelectorAll("[data-reveal]"));
+
+    if (prefersReducedMotion || !targets.length) {
+      targets.forEach((el) => el.classList.add("is-visible"));
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.16, rootMargin: "0px 0px -8% 0px" },
+    );
+
+    targets.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [lang, activeFilter]);
+
   const filters = useMemo(
     () => ["All", ...Array.from(new Set(projects.map((project) => project.category)))],
     [],
@@ -567,12 +613,20 @@ function App() {
 
   return (
     <main className="site-shell">
+      <div className="ambient" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+        <span />
+        <span />
+      </div>
+
       <Header t={t} onToggleLang={() => setLang(lang === "tr" ? "en" : "tr")} />
 
       <section className="hero" id="top">
         <div className="hero__copy">
-          <h1>{t.heroTitle}</h1>
           <p className="hero__role">{t.heroRole}</p>
+          <h1>{t.heroTitle}</h1>
           <p className="hero__text">{t.heroText}</p>
           <div className="hero__actions">
             <a className="button button--primary" href="#projects">
@@ -607,24 +661,25 @@ function App() {
           </dl>
         </div>
 
-        <div className="hero-stage" aria-label={t.featuredTitle}>
-          <div className="hero-stage__phone">
+        <div className="hero__reel">
+          <div className="hero__reel-media">
             <video autoPlay muted loop playsInline poster={asset("Funny.png")}>
               <source src={asset("ColorBlastMatchHero.mp4")} type="video/mp4" />
             </video>
           </div>
-          <div className="hero-stage__panel">
+          <div className="hero__reel-caption">
+            <CheckCircle2 size={16} />
             <div>
               <span>{t.featuredTitle}</span>
               <strong>{t.featuredText}</strong>
             </div>
-            <CheckCircle2 size={20} />
           </div>
         </div>
       </section>
 
       <section className="section about" id="about">
-        <div className="about__content">
+        <div className="about__content" data-reveal>
+          <Eyebrow label={t.nav[0]} />
           <h2>{t.aboutTitle}</h2>
           <p>{t.aboutText}</p>
           <div className="about__highlights">
@@ -636,7 +691,7 @@ function App() {
             ))}
           </div>
         </div>
-        <div className="timeline">
+        <div className="timeline" data-reveal>
           <h3>{t.experienceTitle}</h3>
           {t.experience.map((item) => (
             <article key={`${item.role}-${item.place}`}>
@@ -648,7 +703,7 @@ function App() {
         </div>
       </section>
 
-      <section className="google-play" id="google-play">
+      <section className="google-play" id="google-play" data-reveal>
         <div className="google-play__media">
           <img src={asset(activePlayProject.image)} alt={activePlayProject.title} />
           <div className="store-badge">
@@ -663,7 +718,7 @@ function App() {
           </button>
         </div>
         <div className="google-play__content">
-          <Store size={28} />
+          <Eyebrow label={t.nav[2]} />
           <h2>{t.playTitle}</h2>
           <h3 className="google-play__game-title">{activePlayProject.title}</h3>
           <p>{activePlayProject.description[lang]}</p>
@@ -703,8 +758,9 @@ function App() {
       </section>
 
       <section className="section section--projects" id="projects">
-        <div className="section__heading">
+        <div className="section__heading" data-reveal>
           <div>
+            <Eyebrow label={t.nav[1]} />
             <h2>{t.projectsTitle}</h2>
             <p>{t.projectsText}</p>
           </div>
@@ -722,61 +778,79 @@ function App() {
           </div>
         </div>
 
-        <div className="project-grid">
-          {filteredProjects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              lang={lang}
-              project={project}
-              t={t}
-              onOpenVideo={() => {
-                recordPortfolioEvent("video_open", { projectId: project.id, label: project.title });
-                setVideo(project);
-              }}
-              onOpenPending={() => setPendingOpen(true)}
-              onTrackEvent={recordPortfolioEvent}
-            />
-          ))}
-        </div>
+        <ProjectShowcase
+          filteredProjects={filteredProjects}
+          lang={lang}
+          t={t}
+          onOpenVideo={(project) => {
+            recordPortfolioEvent("video_open", { projectId: project.id, label: project.title });
+            setVideo(project);
+          }}
+          onOpenPending={() => setPendingOpen(true)}
+          onTrackEvent={recordPortfolioEvent}
+        />
       </section>
 
       <section className="section focus" id="focus">
-        <div className="focus__intro">
-          <Cpu size={24} />
+        <div className="focus__intro" data-reveal>
+          <Eyebrow label={t.nav[3]} />
           <h2>{t.skillsTitle}</h2>
           <p>{t.skillsText}</p>
-          <div className="tool-cloud">
-            {[
-              "Unity",
-              "C#",
-              "Zenject",
-              "DOTween",
-              "Odin",
-              "Profiler",
-              "SDK",
-              "Firebase Analytics",
-              "Git",
-              "Google Play Console",
-            ].map((tool) => (
-              <span key={tool}>{tool}</span>
-            ))}
+          <div className="tool-cloud" role="list">
+            <div className="tool-cloud__track">
+              {[
+                "Unity",
+                "C#",
+                "Zenject",
+                "DOTween",
+                "Odin",
+                "Profiler",
+                "SDK",
+                "Firebase Analytics",
+                "Git",
+                "Google Play Console",
+              ]
+                .concat([
+                  "Unity",
+                  "C#",
+                  "Zenject",
+                  "DOTween",
+                  "Odin",
+                  "Profiler",
+                  "SDK",
+                  "Firebase Analytics",
+                  "Git",
+                  "Google Play Console",
+                ])
+                .map((tool, index) => (
+                  <span key={`${tool}-${index}`}>{tool}</span>
+                ))}
+            </div>
           </div>
         </div>
-        <div className="focus__grid">
-          {focusItems.map((item) => {
+        <div className="focus__list">
+          {focusItems.map((item, index) => {
             const Icon = item.icon;
             return (
-              <article className="focus-card" key={item.title}>
-                <Icon size={24} />
-                <h3>{item.title}</h3>
-                <p>{item.text[lang]}</p>
+              <article
+                className="focus-row"
+                key={item.title}
+                data-reveal
+                style={{ "--reveal-delay": `${index * 90}ms` }}
+              >
+                <span className="focus-row__index">{String(index + 1).padStart(2, "0")}</span>
+                <Icon size={22} />
+                <div>
+                  <h3>{item.title}</h3>
+                  <p>{item.text[lang]}</p>
+                </div>
               </article>
             );
           })}
         </div>
       </section>
 
-      <section className="cert-strip" aria-label="Certificates and education">
+      <section className="cert-strip" aria-label="Certificates and education" data-reveal>
         <div>
           <Award size={22} />
           <span>Unity Essentials Pathway</span>
@@ -791,8 +865,9 @@ function App() {
         </div>
       </section>
 
-      <section className="contact-band" id="contact">
+      <section className="contact-band" id="contact" data-reveal>
         <div>
+          <Eyebrow label={t.nav[4]} />
           <h2>{t.contactTitle}</h2>
           <p>{t.contactText}</p>
         </div>
@@ -829,6 +904,15 @@ function App() {
   );
 }
 
+function Eyebrow({ label }) {
+  return (
+    <span className="eyebrow">
+      <i />
+      {label}
+    </span>
+  );
+}
+
 function Header({ onToggleLang, t }) {
   return (
     <header className="topbar">
@@ -856,28 +940,125 @@ function Header({ onToggleLang, t }) {
   );
 }
 
-function ProjectCard({ lang, onOpenPending, onOpenVideo, onTrackEvent, project, t }) {
+function ProjectShowcase({ filteredProjects, lang, onOpenPending, onOpenVideo, onTrackEvent, t }) {
+  const trackRef = useRef(null);
+  const progressRef = useRef(null);
+  const dragState = useRef({ dragging: false, startX: 0, startScroll: 0, moved: false });
+
+  const updateProgress = () => {
+    const track = trackRef.current;
+    const bar = progressRef.current;
+    if (!track || !bar) return;
+    const max = track.scrollWidth - track.clientWidth;
+    const pct = max > 0 ? (track.scrollLeft / max) * 100 : 0;
+    bar.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+  };
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (track) track.scrollLeft = 0;
+    updateProgress();
+  }, [filteredProjects]);
+
+  useEffect(() => {
+    const onMove = (event) => {
+      const track = trackRef.current;
+      const state = dragState.current;
+      if (!track || !state.dragging) return;
+      const delta = event.clientX - state.startX;
+      if (Math.abs(delta) > 4) state.moved = true;
+      track.scrollLeft = state.startScroll - delta;
+      updateProgress();
+    };
+    const onUp = () => {
+      dragState.current.dragging = false;
+    };
+
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+  }, []);
+
+  const onPointerDown = (event) => {
+    if (event.pointerType !== "mouse") return;
+    const track = trackRef.current;
+    if (!track) return;
+    dragState.current = { dragging: true, startX: event.clientX, startScroll: track.scrollLeft, moved: false };
+  };
+
+  const onClickCapture = (event) => {
+    if (dragState.current.moved) {
+      event.preventDefault();
+      event.stopPropagation();
+      dragState.current.moved = false;
+    }
+  };
+
+  return (
+    <div className="showcase">
+      <div
+        className="showcase__track"
+        onClickCapture={onClickCapture}
+        onPointerDown={onPointerDown}
+        onScroll={updateProgress}
+        ref={trackRef}
+      >
+        {filteredProjects.map((project, index) => (
+          <ProjectCard
+            index={index}
+            key={project.id}
+            lang={lang}
+            project={project}
+            t={t}
+            total={filteredProjects.length}
+            onOpenPending={onOpenPending}
+            onOpenVideo={() => onOpenVideo(project)}
+            onTrackEvent={onTrackEvent}
+          />
+        ))}
+      </div>
+      <div className="showcase__progress">
+        <span ref={progressRef} />
+      </div>
+    </div>
+  );
+}
+
+function ProjectCard({ index, lang, onOpenPending, onOpenVideo, onTrackEvent, project, t, total }) {
   const trackProjectClick = (label) => {
     onTrackEvent("project_click", { projectId: project.id, label });
   };
 
   return (
-    <article className="project-card" style={{ "--accent": project.accent }}>
-      <div className="project-card__media">
+    <article
+      className="rail-card"
+      data-featured={project.featured ? "true" : undefined}
+      data-reveal
+      style={{ "--accent": project.accent, "--reveal-delay": `${Math.min(index, 6) * 60}ms` }}
+    >
+      <div className="rail-card__index">
+        <span>{String(index + 1).padStart(2, "0")}</span>
+        <em>/{String(total).padStart(2, "0")}</em>
+      </div>
+      <div className="rail-card__media">
         {project.previewVideo ? (
           <video autoPlay muted loop playsInline poster={asset(project.image)}>
             <source src={asset(project.previewVideo)} type="video/mp4" />
           </video>
         ) : (
-          <img src={asset(project.image)} alt={project.title} />
+          <img alt={project.title} draggable={false} src={asset(project.image)} />
         )}
-        <span className="project-card__status">{project.status[lang]}</span>
+        <span className="rail-card__status">{project.status[lang]}</span>
+        {project.featured && (
+          <span className="rail-card__featured">{lang === "tr" ? "Öne çıkan" : "Featured"}</span>
+        )}
       </div>
-      <div className="project-card__body">
-        <div>
-          <h3>{project.title}</h3>
-          <p>{project.description[lang]}</p>
-        </div>
+      <div className="rail-card__body">
+        <h3>{project.title}</h3>
+        <p>{project.description[lang]}</p>
         <div className="tags">
           {project.tags.map((tag) => (
             <span key={tag}>{tag}</span>
