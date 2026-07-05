@@ -111,7 +111,6 @@ const copy = {
     contactTitle: "Yeni oyun, prototip veya freelance iş için konuşalım.",
     contactText:
       "Unity tabanlı mobil oyun geliştirme, level tool üretimi veya mevcut prototipleri yayınlanabilir seviyeye taşıma konusunda yardımcı olabilirim.",
-    cvDownload: "CV indir",
     adminTitle: "Admin ziyaret paneli",
     adminSubtitle: "Shift + A ile acilir. Veriler Supabase backend baglantisi aktifse dolar.",
     adminPassword: "Admin sifresi",
@@ -198,7 +197,6 @@ const copy = {
     contactTitle: "Let’s talk about a new game, prototype or freelance build.",
     contactText:
       "I can help with Unity-based mobile game development, level tooling or taking an existing prototype closer to release quality.",
-    cvDownload: "Download CV",
     adminTitle: "Admin visitor panel",
     adminSubtitle: "Opens with Shift + A. Data appears when the Supabase backend is configured.",
     adminPassword: "Admin password",
@@ -561,9 +559,6 @@ function App() {
   const trackExternal = (label, projectId = "") => {
     recordPortfolioEvent("external_click", { label, projectId });
   };
-  const trackCvDownload = () => {
-    trackExternal("CV download", "cv-download");
-  };
 
   return (
     <main className="site-shell">
@@ -586,15 +581,6 @@ function App() {
             <a className="button button--ghost" href="mailto:efrknsngl@gmail.com">
               <Mail size={18} />
               Email
-            </a>
-            <a
-              className="button button--ghost"
-              href={asset("Enes-Furkan-Sengul-CV-2026-06-17.pdf")}
-              download="Enes-Furkan-Sengul-CV.pdf"
-              onClick={trackCvDownload}
-            >
-              <Download size={18} />
-              {t.cvDownload}
             </a>
           </div>
           <dl className="hero__stats">
@@ -808,14 +794,6 @@ function App() {
           <a href="https://www.linkedin.com/in/efurkansengull/" target="_blank" rel="noreferrer">
             <Linkedin size={18} />
             LinkedIn
-          </a>
-          <a
-            href={asset("Enes-Furkan-Sengul-CV-2026-06-17.pdf")}
-            download="Enes-Furkan-Sengul-CV.pdf"
-            onClick={trackCvDownload}
-          >
-            <Download size={18} />
-            {t.cvDownload}
           </a>
         </div>
       </section>
