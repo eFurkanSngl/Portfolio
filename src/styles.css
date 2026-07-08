@@ -180,7 +180,7 @@ button {
 
 .topbar nav a {
   min-height: 36px;
-  padding: 9px 12px;
+  padding: 9px 11px;
   border-radius: 999px;
   color: var(--muted);
   font-size: 0.82rem;
@@ -448,6 +448,7 @@ button {
 .about__content,
 .timeline,
 .google-play,
+.game-corner,
 .focus-card,
 .cert-strip,
 .contact-band {
@@ -846,6 +847,62 @@ button {
   background: rgba(255, 200, 87, 0.12);
 }
 
+.game-corner {
+  margin: 14px 0 70px;
+  padding: 22px;
+  border-color: rgba(157, 124, 255, 0.34);
+  border-radius: 34px;
+  background:
+    linear-gradient(135deg, rgba(157, 124, 255, 0.15), rgba(36, 224, 208, 0.08) 48%, rgba(255, 200, 87, 0.08)),
+    var(--panel);
+}
+
+.game-corner__heading {
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.game-corner__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid rgba(157, 124, 255, 0.44);
+  border-radius: 999px;
+  background: rgba(157, 124, 255, 0.14);
+  color: #f0eaff;
+  font-size: 0.84rem;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.game-corner__badge svg {
+  color: var(--gold);
+}
+
+.game-corner__frame {
+  min-height: 620px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 28px;
+  background: #140b30;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.game-corner__frame iframe {
+  display: block;
+  width: 100%;
+  height: 620px;
+  border: 0;
+}
+
+.game-corner__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
 .focus {
   display: grid;
   grid-template-columns: minmax(280px, 0.75fr) 1fr;
@@ -944,6 +1001,7 @@ button {
 
 .contact-band,
 .google-play,
+.game-corner,
 .about__content,
 .timeline {
   animation: cardReveal 780ms ease both;
@@ -1525,6 +1583,28 @@ footer {
 
   .section {
     padding: 58px 0;
+  }
+
+  .game-corner {
+    padding: 14px;
+  }
+
+  .game-corner__heading {
+    align-items: flex-start;
+  }
+
+  .game-corner__frame,
+  .game-corner__frame iframe {
+    height: 580px;
+    min-height: 580px;
+  }
+
+  .game-corner__actions {
+    justify-content: stretch;
+  }
+
+  .game-corner__actions .icon-button {
+    width: 100%;
   }
 
   .about__content,

@@ -43,7 +43,7 @@ import {
 
 const copy = {
   tr: {
-    nav: ["Hakkımda", "Projeler", "Google Play", "Yetenekler", "İletişim"],
+    nav: ["Hakkımda", "Projeler", "Google Play", "Oyun Köşesi", "Yetenekler", "İletişim"],
     language: "EN",
     heroTitle: "Furkan Şengül",
     heroRole: "Mobile Game Developer",
@@ -94,6 +94,10 @@ const copy = {
       ["Android Pipeline", "SDK, Firebase Analytics, reklam ve build akışı"],
       ["Store Ready Polish", "Haptic, audio, particle pooling ve mobil UI"],
     ],
+    gameCornerTitle: "Oyun Köşesi",
+    gameCornerText: "Portföyü gezerken kısa bir mola vermek isteyenler için sayfanın içine küçük bir canvas oyun koydum.",
+    gameCornerBadge: "Mini oyun",
+    gameCornerOpen: "Tam ekranda aç",
     projectsTitle: "Seçilmiş projeler",
     projectsText:
       "CV’deki teknik deneyimle harmanlanmış mobil puzzle prototipleri, client işi, Unity Editor aracı ve yayınlanmış oyun çalışmaları.",
@@ -129,7 +133,7 @@ const copy = {
     footer: "© 2026 Furkan Şengül. Game Developer Portfolio.",
   },
   en: {
-    nav: ["About", "Projects", "Google Play", "Focus", "Contact"],
+    nav: ["About", "Projects", "Google Play", "Game Corner", "Focus", "Contact"],
     language: "TR",
     heroTitle: "Furkan Şengül",
     heroRole: "Mobile Game Developer",
@@ -180,6 +184,10 @@ const copy = {
       ["Android Pipeline", "SDK, Firebase Analytics, ads and build flow"],
       ["Store Ready Polish", "Haptics, audio, particle pooling and mobile UI"],
     ],
+    gameCornerTitle: "Game Corner",
+    gameCornerText: "A small canvas game embedded into the portfolio for visitors who want a quick break while browsing.",
+    gameCornerBadge: "Mini game",
+    gameCornerOpen: "Open full screen",
     projectsTitle: "Selected projects",
     projectsText:
       "Mobile puzzle prototypes, client work, Unity Editor tooling and released game work blended with the technical experience from the CV.",
@@ -726,6 +734,39 @@ function App() {
         </div>
       </section>
 
+      <section className="section game-corner" id="game-corner">
+        <div className="section__heading game-corner__heading">
+          <div>
+            <h2>{t.gameCornerTitle}</h2>
+            <p>{t.gameCornerText}</p>
+          </div>
+          <span className="game-corner__badge">
+            <Gamepad2 size={18} />
+            {t.gameCornerBadge}
+          </span>
+        </div>
+        <div className="game-corner__frame">
+          <iframe
+            title="Wiggle Out mini game"
+            src={asset("wiggle-out.html")}
+            loading="lazy"
+            allow="autoplay; fullscreen"
+          />
+        </div>
+        <div className="game-corner__actions">
+          <a
+            className="icon-button"
+            href={asset("wiggle-out.html")}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() => trackExternal("Wiggle Out full screen", "wiggle-out")}
+          >
+            <Play size={16} />
+            {t.gameCornerOpen}
+          </a>
+        </div>
+      </section>
+
       <section className="section focus" id="focus">
         <div className="focus__intro">
           <Cpu size={24} />
@@ -822,8 +863,9 @@ function Header({ onToggleLang, t }) {
         <a href="#about">{t.nav[0]}</a>
         <a href="#projects">{t.nav[1]}</a>
         <a href="#google-play">{t.nav[2]}</a>
-        <a href="#focus">{t.nav[3]}</a>
-        <a href="#contact">{t.nav[4]}</a>
+        <a href="#game-corner">{t.nav[3]}</a>
+        <a href="#focus">{t.nav[4]}</a>
+        <a href="#contact">{t.nav[5]}</a>
       </nav>
 
       <button className="language-button" onClick={onToggleLang} type="button" aria-label="Change language">
