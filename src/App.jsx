@@ -588,10 +588,6 @@ function App() {
               <Store size={18} />
               {t.secondaryCta}
             </a>
-            <a className="button button--ghost" href={asset("Enes-Furkan-Sengul-CV.pdf")} download onClick={() => recordPortfolioEvent("cv_download", { label: "Hero CV" })}>
-              <Download size={18} />
-              Download CV
-            </a>
           </div>
           <dl className="hero__stats">
             {t.stats.map(([value, label]) => (
