@@ -40,6 +40,7 @@ import {
   recordPortfolioEvent,
   recordVisit,
 } from "./lib/portfolioAnalytics";
+import WorkshopScene from "./WorkshopScene";
 
 const copy = {
   tr: {
@@ -574,8 +575,9 @@ function App() {
 
       <section className="hero" id="top">
         <div className="hero__copy">
-          <h1>{t.heroTitle}</h1>
-          <p className="hero__role">{t.heroRole}</p>
+          <div className="workshop-kicker"><span /> Interactive Game Workshop</div>
+          <p className="hero__hello">Hi, I&apos;m</p>
+          <h1><span>{t.heroTitle}</span><em>{t.heroRole}</em></h1>
           <p className="hero__text">{t.heroText}</p>
           <div className="hero__actions">
             <a className="button button--primary" href="#projects">
@@ -586,9 +588,9 @@ function App() {
               <Store size={18} />
               {t.secondaryCta}
             </a>
-            <a className="button button--ghost" href="mailto:efrknsngl@gmail.com">
-              <Mail size={18} />
-              Email
+            <a className="button button--ghost" href={asset("Enes-Furkan-Sengul-CV.pdf")} download onClick={() => recordPortfolioEvent("cv_download", { label: "Hero CV" })}>
+              <Download size={18} />
+              Download CV
             </a>
           </div>
           <dl className="hero__stats">
@@ -601,19 +603,23 @@ function App() {
           </dl>
         </div>
 
-        <div className="hero-stage" aria-label={t.featuredTitle}>
-          <div className="hero-stage__phone">
+        <div className="hero-stage workshop-stage" aria-label="Interactive 3D game developer workshop">
+          <WorkshopScene />
+          <div className="workshop-video-card">
             <video autoPlay muted loop playsInline poster={asset("Funny.png")}>
               <source src={asset("ColorBlastMatchHero.mp4")} type="video/mp4" />
             </video>
+            <span>{t.featuredTitle}</span>
           </div>
           <div className="hero-stage__panel">
             <div>
-              <span>{t.featuredTitle}</span>
+              <span>Now building</span>
               <strong>{t.featuredText}</strong>
             </div>
             <CheckCircle2 size={20} />
           </div>
+          <div className="workshop-stat"><b>12+</b><span>Games & tools</span></div>
+          <small className="workshop-scene-note">Move your cursor · Scroll to explore</small>
         </div>
       </section>
 
@@ -818,6 +824,20 @@ function App() {
         </div>
       </section>
 
+      <section className="section workshop-process" id="process">
+        <div className="section__heading process-heading">
+          <div>
+            <span className="section-index">05 · Development loop</span>
+            <h2>{lang === "tr" ? "Fikirden oyun hissine." : "From question to game feel."}</h2>
+          </div>
+          <p>{lang === "tr" ? "Yaratıcılık, mimari ve performansı aynı üretim döngüsünde tutuyorum." : "A focused loop that keeps creativity, architecture and performance moving together."}</p>
+        </div>
+        <div className="process-flow">
+          {["Analyze", "Design", "Build", "Polish", "Test", "Optimize"].map((step, index) => (
+            <div key={step}><span>{String(index + 1).padStart(2, "0")}</span><strong>{step}</strong>{index < 5 && <i>→</i>}</div>
+          ))}
+        </div>
+      </section>
       <section className="contact-band" id="contact">
         <div>
           <h2>{t.contactTitle}</h2>
@@ -881,8 +901,22 @@ function ProjectCard({ lang, onOpenPending, onOpenVideo, onTrackEvent, project, 
     onTrackEvent("project_click", { projectId: project.id, label });
   };
 
+  const onTilt = (event) => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    event.currentTarget.style.setProperty("--tilt-x", `${-y * 5}deg`);
+    event.currentTarget.style.setProperty("--tilt-y", `${x * 7}deg`);
+  };
+
+  const resetTilt = (event) => {
+    event.currentTarget.style.setProperty("--tilt-x", "0deg");
+    event.currentTarget.style.setProperty("--tilt-y", "0deg");
+  };
+
   return (
-    <article className="project-card" style={{ "--accent": project.accent }}>
+    <article className="project-card" style={{ "--accent": project.accent }} onPointerMove={onTilt} onPointerLeave={resetTilt}>
       <div className="project-card__media">
         {project.previewVideo ? (
           <video autoPlay muted loop playsInline poster={asset(project.image)}>
