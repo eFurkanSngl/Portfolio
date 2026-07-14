@@ -486,7 +486,6 @@ const focusItems = [
 const projectOrder = [
   "color-blast-match",
   "fill-the-block",
-  "level-generator",
   "unity-folder-forge",
   "find-the-differences",
   "block-sort",
@@ -496,6 +495,7 @@ const projectOrder = [
   "flip-it",
   "dino-run",
   "ocean-blast",
+  "level-generator",
 ];
 
 function asset(name) {
