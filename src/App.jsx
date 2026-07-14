@@ -244,7 +244,7 @@ const projects = [
   },
   {
     id: "level-generator",
-    title: "Level Generator",
+    title: "Puzzle Generator",
     status: { tr: "Unity Editor aracı", en: "Unity Editor tool" },
     description: {
       tr: "Unity Editor içinde çalışan, grid tabanlı hücre ve obstacle yerleşimiyle level prefab ve level data üretimini hızlandıran özel araç.",
