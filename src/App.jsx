@@ -244,17 +244,17 @@ const projects = [
   },
   {
     id: "level-generator",
-    title: "Level Generator",
-    status: { tr: "Unity Editor aracı", en: "Unity Editor tool" },
+    title: "Unity Level Generator",
+    status: { tr: "UPM Editor aracı", en: "UPM Editor tool" },
     description: {
-      tr: "Unity Editor içinde çalışan, grid tabanlı hücre ve obstacle yerleşimiyle level prefab ve level data üretimini hızlandıran özel araç.",
-      en: "A custom Unity Editor tool that accelerates grid-based cell, obstacle, level prefab and level data production.",
+      tr: "Odin TableMatrix ile renk tabanlı lane/grid seviyeleri görsel düzenleyen Unity Editor aracı. GridX/GridY, canlı renk bütçesi, validasyon, auto-fill, Undo ve LevelData ScriptableObject'e kayıt akışı içerir.",
+      en: "A Unity Editor level authoring tool for color-based lane/grid puzzles. It uses Odin TableMatrix, GridX/GridY editing, live color budgets, validation, auto-fill, Undo and LevelData ScriptableObject saving.",
     },
     image: "LevelGenerator.png",
-    tags: ["Unity", "C#", "Editor Tool", "Automation"],
+    tags: ["Unity", "C#", "Odin", "ScriptableObject"],
     category: "Tooling",
     accent: "#f6b73c",
-    github: "https://github.com/eFurkanSngl/colorblastmatch-level-generator",
+    github: "https://github.com/eFurkanSngl/Unity-Level-Generator",
   },
   {
     id: "unity-folder-forge",
