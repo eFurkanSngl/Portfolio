@@ -375,6 +375,7 @@ body::after {
   --tilt-x: 0deg;
   --tilt-y: 0deg;
   grid-column: span 4;
+  scroll-margin-top: 110px;
   border-color: var(--text);
   border-radius: 25px;
   background: var(--panel);

@@ -912,7 +912,13 @@ function ProjectCard({ lang, onOpenPending, onOpenVideo, onTrackEvent, project, 
   };
 
   return (
-    <article className="project-card" style={{ "--accent": project.accent }} onPointerMove={onTilt} onPointerLeave={resetTilt}>
+    <article
+      className="project-card"
+      id={`project-${project.id}`}
+      style={{ "--accent": project.accent }}
+      onPointerMove={onTilt}
+      onPointerLeave={resetTilt}
+    >
       <div className="project-card__media">
         {project.previewVideo ? (
           <video autoPlay muted loop playsInline poster={asset(project.image)}>
