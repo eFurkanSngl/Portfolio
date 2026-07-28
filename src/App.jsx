@@ -227,6 +227,33 @@ const copy = {
 
 const projects = [
   {
+    id: "car-stack",
+    title: "Car Stack",
+    status: { tr: "Google Play hazırlanıyor", en: "Preparing for Google Play" },
+    description: {
+      tr: "Renkli arabaları eşleştirip şeritleri temizlemeye dayalı mobil puzzle oyunu. Hamle planlama, lane düzeni, booster sistemi, level progression ve yayın öncesi mobil polish akışları içerir.",
+      en: "A mobile puzzle game about matching colorful cars and clearing lanes, featuring move planning, lane layouts, boosters, level progression and release-ready mobile polish.",
+    },
+    image: "CarStack-Store-01.png",
+    video: "CarStack-Gameplay.mp4",
+    gallery: [
+      "CarStack-GamePage-2.png",
+      "CarStack-Store-01.png",
+      "CarStack-Store-03.png",
+      "CarStack-Store-06.png",
+      "CarStack-page-4.png",
+      "CarStack-page-5.png",
+      "CarStack-page-6.png",
+      "CarStack-page-8.png",
+      "CarStack-page-9.png",
+    ],
+    tags: ["Unity", "C#", "Mobile Puzzle", "Google Play"],
+    category: "Puzzle",
+    accent: "#1689f5",
+    googlePending: true,
+    github: "https://github.com/eFurkanSngl/CarStack",
+  },
+  {
     id: "color-blast-match",
     title: "Color Blast Match",
     status: { tr: "Aktif prototip", en: "Active prototype" },
@@ -498,6 +525,7 @@ const focusItems = [
 ];
 
 const projectOrder = [
+  "car-stack",
   "unity-level-generator",
   "color-blast-match",
   "fill-the-block",
@@ -1037,7 +1065,10 @@ function VideoModal({ onClose, project, t }) {
 
   return (
     <div className="modal" onClick={onClose} role="presentation">
-      <div className="modal__panel" onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true">
+      <div
+        className={`modal__panel${project.gallery?.length ? " modal__panel--media" : ""}`}
+        onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true"
+      >
         <button className="modal__close" onClick={onClose} type="button" aria-label="Close video">
           <X size={20} />
         </button>
@@ -1045,10 +1076,23 @@ function VideoModal({ onClose, project, t }) {
           <BriefcaseBusiness size={18} />
           <h3>{project.title}</h3>
         </div>
-        <video controls autoPlay playsInline poster={asset(project.image)}>
+        <video controls autoPlay playsInline preload="metadata" poster={asset(project.image)}>
           <source src={asset(project.video)} type={type} />
           {t.watchVideo}
         </video>
+        {project.gallery?.length > 0 && (
+          <div className="project-gallery" aria-label={`${project.title} screenshots`}>
+            {project.gallery.map((image, index) => (
+              <a href={asset(image)} key={image} target="_blank" rel="noreferrer">
+                <img
+                  src={asset(image)}
+                  alt={`${project.title} screenshot ${index + 1}`}
+                  loading="lazy"
+                />
+              </a>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
