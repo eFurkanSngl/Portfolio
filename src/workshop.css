@@ -541,3 +541,39 @@ footer { width: min(1180px, calc(100% - 44px)); margin: 0 auto; padding: 24px 0 
   .project-card { transform: none !important; }
   .process-flow > div { animation: none; }
 }
+
+/* Portfolio readability motion fix
+   Keep the hero entrance, but stop scroll-linked/floating motion so
+   project and content cards remain stable while visitors read. */
+.workshop-stage {
+  animation: contentRise 720ms ease both !important;
+}
+
+.about,
+.google-play,
+.section__heading,
+.game-corner,
+.focus,
+.cert-strip,
+.contact-band {
+  animation: none !important;
+  animation-timeline: auto !important;
+  opacity: 1;
+  transform: none;
+}
+
+.project-card,
+.focus-card,
+.about__content,
+.timeline {
+  animation: none !important;
+}
+
+.process-flow > div {
+  animation: none !important;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.process-flow > div:hover {
+  transform: translateY(-3px);
+}
