@@ -251,7 +251,6 @@ const projects = [
     category: "Puzzle",
     accent: "#1689f5",
     googlePending: true,
-    github: "https://github.com/eFurkanSngl/CarStack",
   },
   {
     id: "color-blast-match",
