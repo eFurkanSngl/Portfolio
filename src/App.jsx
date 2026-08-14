@@ -229,7 +229,7 @@ const projects = [
   {
     id: "car-stack",
     title: "Car Stack",
-    status: { tr: "Google Play hazırlanıyor", en: "Preparing for Google Play" },
+    status: { tr: "Google Play'de", en: "Available on Google Play" },
     description: {
       tr: "Renkli arabaları eşleştirip şeritleri temizlemeye dayalı mobil puzzle oyunu. Hamle planlama, lane düzeni, booster sistemi, level progression ve yayın öncesi mobil polish akışları içerir.",
       en: "A mobile puzzle game about matching colorful cars and clearing lanes, featuring move planning, lane layouts, boosters, level progression and release-ready mobile polish.",
@@ -250,7 +250,7 @@ const projects = [
     tags: ["Unity", "C#", "Mobile Puzzle", "Google Play"],
     category: "Puzzle",
     accent: "#1689f5",
-    googlePending: true,
+    googlePlay: "https://play.google.com/store/apps/details?id=com.sglgames.carstack",
   },
   {
     id: "color-blast-match",
