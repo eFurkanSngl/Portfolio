@@ -6,7 +6,6 @@ import {
   BriefcaseBusiness,
   ChevronLeft,
   ChevronRight,
-  CheckCircle2,
   Clock,
   Code2,
   Cpu,
@@ -40,7 +39,6 @@ import {
   recordPortfolioEvent,
   recordVisit,
 } from "./lib/portfolioAnalytics";
-import WorkshopScene from "./WorkshopScene";
 
 const copy = {
   tr: {
@@ -62,7 +60,7 @@ const copy = {
     ],
     aboutTitle: "Mobil oyunları prototipten yayın kalitesine taşımaya odaklanıyorum.",
     aboutText:
-      "Junior Unity Game Developer olarak mobil puzzle ve casual oyunlarda gameplay sistemleri, level logic, UI akışı, object pooling, event-driven mimari ve Android build hazırlığı üzerinde çalışıyorum. CV’deki deneyimimi mevcut projelerle birleştirerek bu portföyü daha ürün odaklı hale getirdim.",
+      "Junior Unity Game Developer olarak mobil puzzle ve casual oyunlarda gameplay sistemleri, level logic, UI akışı, object pooling, event-driven mimari ve Android build hazırlığı üzerinde çalışıyorum. ABD merkezli bir müşteri için geliştirdiğim mobil puzzle oyununda prototipten Android yayınına kadar süreci üstlendim.",
     experienceTitle: "Deneyim",
     experience: [
       {
@@ -101,7 +99,7 @@ const copy = {
     gameCornerOpen: "Tam ekranda aç",
     projectsTitle: "Seçilmiş projeler",
     projectsText:
-      "CV’deki teknik deneyimle harmanlanmış mobil puzzle prototipleri, client işi, Unity Editor aracı ve yayınlanmış oyun çalışmaları.",
+      "Yayımlanmış oyunlar, gameplay prototipleri ve Unity Editor araçları.",
     allFilter: "Tümü",
     watchVideo: "Videoyu izle",
     visitProject: "Projeye git",
@@ -617,47 +615,68 @@ function App() {
 
       <section className="hero" id="top">
         <div className="hero__copy">
-          <div className="workshop-kicker"><span /> Interactive Game Workshop</div>
-          <p className="hero__hello">Hi, I&apos;m</p>
-          <h1><span>{t.heroTitle}</span><em>{t.heroRole}</em></h1>
-          <p className="hero__text">{t.heroText}</p>
+          <p className="eyebrow"><span /> UNITY GAME DEVELOPER</p>
+          <h1>Enes Furkan<br />Şengül<span>.</span></h1>
+          <p className="hero__text">{lang === "tr"
+            ? "Unity ve C# ile mobil puzzle oyunları geliştiriyorum. Gameplay sistemleri, oyun hissi ve Android performansı üzerine çalışıyorum."
+            : "I build mobile puzzle games in Unity and C#, with a focus on gameplay systems, game feel, and Android performance."}</p>
           <div className="hero__actions">
-            <a className="button button--primary" href="#projects">
-              <Gamepad2 size={18} />
-              {t.primaryCta}
-            </a>
-            <a className="button button--store" href="#google-play">
-              <Store size={18} />
-              {t.secondaryCta}
+            <a className="button button--primary" href="#projects">{t.primaryCta} <span aria-hidden="true">↓</span></a>
+            <a className="button button--ghost" href={asset("Enes-Furkan-Sengul-CV.pdf")} download
+              onClick={() => recordPortfolioEvent("cv_download", { label: "CV" })}>
+              <Download size={17} /> {lang === "tr" ? "CV’yi indir" : "Download CV"}
             </a>
           </div>
-          <dl className="hero__stats">
-            {t.stats.map(([value, label]) => (
-              <div key={label}>
-                <dt>{value}</dt>
-                <dd>{label}</dd>
-              </div>
+        </div>
+        <figure className="hero-feature">
+          <a className="hero-feature__media" href="#project-car-stack" onClick={() => setActiveFilter("All")}>
+            <img src={asset("CarStack-Store-01.png")} alt={lang === "tr" ? "Car Stack oyun ekranı" : "Car Stack gameplay screenshot"} fetchPriority="high" />
+            <img src={asset("CarStack-page-4.png")} alt={lang === "tr" ? "Car Stack güçlendiricileri" : "Car Stack boosters"} />
+          </a>
+          <figcaption>
+            <div><strong>Car Stack</strong><span>Unity · Mobile Puzzle</span></div>
+            <a href="#project-car-stack" onClick={() => setActiveFilter("All")} aria-label="Car Stack">↗</a>
+          </figcaption>
+        </figure>
+      </section>
+
+      <section className="section section--projects" id="projects">
+        <div className="section__heading">
+          <div>
+            <span className="eyebrow">01 / {lang === "tr" ? "PROJELER" : "WORK"}</span>
+            <h2>{t.projectsTitle}</h2>
+            <p>{t.projectsText}</p>
+          </div>
+          <div className="filters" aria-label="Project filters">
+            {filters.map((filter) => (
+              <button
+                className={activeFilter === filter ? "filter is-active" : "filter"}
+                aria-pressed={activeFilter === filter}
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+                type="button"
+              >
+                {filter === "All" ? t.allFilter : filter}
+              </button>
             ))}
-          </dl>
+          </div>
         </div>
 
-        <div className="hero-stage workshop-stage" aria-label="Interactive 3D game developer workshop">
-          <WorkshopScene />
-          <div className="workshop-video-card">
-            <video autoPlay muted loop playsInline poster={asset("Funny.png")}>
-              <source src={asset("ColorBlastMatchHero.mp4")} type="video/mp4" />
-            </video>
-            <span>{t.featuredTitle}</span>
-          </div>
-          <div className="hero-stage__panel">
-            <div>
-              <span>Now building</span>
-              <strong>{t.featuredText}</strong>
-            </div>
-            <CheckCircle2 size={20} />
-          </div>
-          <div className="workshop-stat"><b>12+</b><span>Games & tools</span></div>
-          <small className="workshop-scene-note">Move your cursor · Scroll to explore</small>
+        <div className="project-grid">
+          {filteredProjects.map((project) => (
+            <ProjectCard
+              key={project.id}
+              lang={lang}
+              project={project}
+              t={t}
+              onOpenVideo={() => {
+                recordPortfolioEvent("video_open", { projectId: project.id, label: project.title });
+                setVideo(project);
+              }}
+              onOpenPending={() => setPendingOpen(true)}
+              onTrackEvent={recordPortfolioEvent}
+            />
+          ))}
         </div>
       </section>
 
@@ -737,44 +756,6 @@ function App() {
               </a>
             )}
           </div>
-        </div>
-      </section>
-
-      <section className="section section--projects" id="projects">
-        <div className="section__heading">
-          <div>
-            <h2>{t.projectsTitle}</h2>
-            <p>{t.projectsText}</p>
-          </div>
-          <div className="filters" aria-label="Project filters">
-            {filters.map((filter) => (
-              <button
-                className={activeFilter === filter ? "filter is-active" : "filter"}
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-                type="button"
-              >
-                {filter === "All" ? t.allFilter : filter}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="project-grid">
-          {filteredProjects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              lang={lang}
-              project={project}
-              t={t}
-              onOpenVideo={() => {
-                recordPortfolioEvent("video_open", { projectId: project.id, label: project.title });
-                setVideo(project);
-              }}
-              onOpenPending={() => setPendingOpen(true)}
-              onTrackEvent={recordPortfolioEvent}
-            />
-          ))}
         </div>
       </section>
 
@@ -862,20 +843,6 @@ function App() {
         </div>
       </section>
 
-      <section className="section workshop-process" id="process">
-        <div className="section__heading process-heading">
-          <div>
-            <span className="section-index">05 · Development loop</span>
-            <h2>{lang === "tr" ? "Fikirden oyun hissine." : "From question to game feel."}</h2>
-          </div>
-          <p>{lang === "tr" ? "Yaratıcılık, mimari ve performansı aynı üretim döngüsünde tutuyorum." : "A focused loop that keeps creativity, architecture and performance moving together."}</p>
-        </div>
-        <div className="process-flow">
-          {["Analyze", "Design", "Build", "Polish", "Test", "Optimize"].map((step, index) => (
-            <div key={step}><span>{String(index + 1).padStart(2, "0")}</span><strong>{step}</strong>{index < 5 && <i>→</i>}</div>
-          ))}
-        </div>
-      </section>
       <section className="contact-band" id="contact">
         <div>
           <h2>{t.contactTitle}</h2>
@@ -939,36 +906,10 @@ function ProjectCard({ lang, onOpenPending, onOpenVideo, onTrackEvent, project, 
     onTrackEvent("project_click", { projectId: project.id, label });
   };
 
-  const onTilt = (event) => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width - 0.5;
-    const y = (event.clientY - rect.top) / rect.height - 0.5;
-    event.currentTarget.style.setProperty("--tilt-x", `${-y * 5}deg`);
-    event.currentTarget.style.setProperty("--tilt-y", `${x * 7}deg`);
-  };
-
-  const resetTilt = (event) => {
-    event.currentTarget.style.setProperty("--tilt-x", "0deg");
-    event.currentTarget.style.setProperty("--tilt-y", "0deg");
-  };
-
   return (
-    <article
-      className="project-card"
-      id={`project-${project.id}`}
-      style={{ "--accent": project.accent }}
-      onPointerMove={onTilt}
-      onPointerLeave={resetTilt}
-    >
+    <article className="project-card" id={`project-${project.id}`}>
       <div className="project-card__media">
-        {project.previewVideo ? (
-          <video autoPlay muted loop playsInline poster={asset(project.image)}>
-            <source src={asset(project.previewVideo)} type="video/mp4" />
-          </video>
-        ) : (
-          <img src={asset(project.image)} alt={project.title} />
-        )}
+        <img src={asset(project.image)} alt={project.title} loading="lazy" decoding="async" />
         <span className="project-card__status">{project.status[lang]}</span>
       </div>
       <div className="project-card__body">
