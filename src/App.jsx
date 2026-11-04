@@ -622,10 +622,6 @@ function App() {
             : "I build mobile puzzle games in Unity and C#, with a focus on gameplay systems, game feel, and Android performance."}</p>
           <div className="hero__actions">
             <a className="button button--primary" href="#projects">{t.primaryCta} <span aria-hidden="true">↓</span></a>
-            <a className="button button--ghost" href={asset("Enes-Furkan-Sengul-CV.pdf")} download
-              onClick={() => recordPortfolioEvent("cv_download", { label: "CV" })}>
-              <Download size={17} /> {lang === "tr" ? "CV’yi indir" : "Download CV"}
-            </a>
           </div>
         </div>
         <figure className="hero-feature">
