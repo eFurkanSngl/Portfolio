@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import {
   Activity,
   Award,
@@ -39,6 +39,8 @@ import {
   recordPortfolioEvent,
   recordVisit,
 } from "./lib/portfolioAnalytics";
+
+const WorkshopScene = lazy(() => import("./WorkshopScene"));
 
 const copy = {
   tr: {
@@ -624,16 +626,16 @@ function App() {
             <a className="button button--primary" href="#projects">{t.primaryCta} <span aria-hidden="true">↓</span></a>
           </div>
         </div>
-        <figure className="hero-feature">
-          <a className="hero-feature__media" href="#project-car-stack" onClick={() => setActiveFilter("All")}>
-            <img src={asset("CarStack-Store-01.png")} alt={lang === "tr" ? "Car Stack oyun ekranı" : "Car Stack gameplay screenshot"} fetchPriority="high" />
-            <img src={asset("CarStack-page-4.png")} alt={lang === "tr" ? "Car Stack güçlendiricileri" : "Car Stack boosters"} />
+        <div className="hero-art">
+          <Suspense fallback={<div className="scene-loading">PUZZLE LAB</div>}>
+            <WorkshopScene lang={lang} />
+          </Suspense>
+          <a className="hero-project-link" href="#project-car-stack" onClick={() => setActiveFilter("All")}>
+            <img src={asset("CarStack-Store-01.png")} alt="" />
+            <span><small>{lang === "tr" ? "YAYIMLANAN OYUN" : "PUBLISHED GAME"}</small><strong>Car Stack</strong></span>
+            <span aria-hidden="true">↗</span>
           </a>
-          <figcaption>
-            <div><strong>Car Stack</strong><span>Unity · Mobile Puzzle</span></div>
-            <a href="#project-car-stack" onClick={() => setActiveFilter("All")} aria-label="Car Stack">↗</a>
-          </figcaption>
-        </figure>
+        </div>
       </section>
 
       <section className="section section--projects" id="projects">

@@ -22,12 +22,7 @@
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  background:
-    linear-gradient(180deg, #17181b00 8rem, var(--bg) 47rem),
-    linear-gradient(119deg, transparent 56%, #4169e130 56% 74%, #4169e117 74%),
-    var(--bg);
-  background-size: 100% 52rem;
-  background-repeat: no-repeat;
+  background: radial-gradient(ellipse at 85% 12rem, #27395c55, transparent 40rem), var(--bg);
 }
 body.modal-open { overflow: hidden; }
 a { color: inherit; text-decoration: none; }
@@ -72,27 +67,6 @@ h2 { font-size: clamp(1.9rem, 4vw, 3rem); letter-spacing: -.045em; line-height: 
   position: relative;
   isolation: isolate;
 }
-/* Restrict the drafting grid to the artwork side of the opening section. */
-.hero::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 0 0 0 47%;
-  pointer-events: none;
-  background-image:
-    linear-gradient(#a8bcff18 1px, transparent 1px),
-    linear-gradient(90deg, #a8bcff18 1px, transparent 1px);
-  background-size: 40px 40px;
-  mask-image: radial-gradient(ellipse at 70% 40%, #000 15%, transparent 74%);
-}
-.hero::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0 auto;
-  width: clamp(36px, 8vw, 92px);
-  height: 2px;
-  background: var(--orange);
-}
 .eyebrow {
   display: inline-flex; align-items: center; gap: 9px; color: var(--orange);
   font: 650 .75rem/1.5 ui-monospace, monospace; letter-spacing: .11em;
@@ -102,13 +76,27 @@ h2 { font-size: clamp(1.9rem, 4vw, 3rem); letter-spacing: -.045em; line-height: 
 .hero h1 span { color: var(--orange); }
 .hero__text { font-size: clamp(1rem, 1.7vw, 1.18rem); max-width: 36ch; }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
-.hero-feature { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-top: 3px solid var(--royal); border-radius: 8px; background: var(--panel); }
-.hero-feature__media { display: grid; grid-template-columns: repeat(2, minmax(0, 180px)); justify-content: center; gap: 14px; padding: 18px; background: #1c2234; }
-.hero-feature img { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 4px; }
-.hero-feature figcaption { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; }
-.hero-feature figcaption div { display: grid; gap: 3px; }
-.hero-feature figcaption span { color: var(--muted); font-size: .82rem; }
-.hero-feature figcaption a { color: var(--blue); font-size: 1.4rem; }
+.hero { min-height: 680px; grid-template-columns: .95fr 1.15fr; gap: 24px; padding-block: 48px 68px; }
+.hero h1 { font-size: clamp(3.2rem, 6.3vw, 5.7rem); }
+.hero-art { position: relative; min-width: 0; }
+.puzzle-scene { position: relative; height: 490px; isolation: isolate; }
+.puzzle-canvas { width: 100%; height: 100%; position: relative; z-index: 1; }
+.scene-orbit { position: absolute; inset: 6% 8%; border: 1px solid #4169e153; border-radius: 50%; transform: rotate(-28deg); background: radial-gradient(ellipse, #4169e125, transparent 67%); }
+.scene-orbit::before { content: ""; position: absolute; inset: 12% -12%; border: 1px solid #4169e12c; border-radius: 50%; transform: rotate(42deg); }
+.scene-orbit::after { content: ""; position: absolute; top: 15%; left: 10%; width: 10px; height: 10px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 24px #ff914d44; }
+.scene-label { position: absolute; top: 0; left: 12px; right: 12px; display: flex; justify-content: space-between; color: var(--muted); font: .68rem ui-monospace, monospace; letter-spacing: .14em; }
+.scene-label span:first-child { color: var(--orange); }
+.scene-controls { position: absolute; z-index: 2; bottom: 8px; left: 0; right: 0; display: flex; justify-content: center; gap: 8px; }
+.scene-controls button { padding: 10px 12px; min-height: 42px; border: 1px solid #525866; border-radius: 4px; color: var(--text); background: #20232bec; font-size: .77rem; }
+.scene-controls button:first-child { color: var(--orange); }
+.scene-controls button:hover { border-color: var(--orange); }
+.scene-fallback { position: absolute; inset: 40px 0; height: 80%; margin: auto; object-fit: contain; }
+.scene-loading { min-height: 490px; display: grid; place-items: center; color: var(--orange); }
+.hero-project-link { display: flex; align-items: center; gap: 14px; max-width: 340px; margin: 8px auto 0; padding: 10px 16px 10px 10px; background: #22252b; border: 1px solid var(--line); border-radius: 8px; }
+.hero-project-link img { width: 44px; height: 50px; border-radius: 3px; object-fit: cover; }
+.hero-project-link > span:nth-child(2) { display: grid; gap: 4px; flex: 1; }
+.hero-project-link small { color: var(--muted); font-size: .62rem; letter-spacing: .1em; }
+.hero-project-link > span:last-child { color: var(--orange); font-size: 1.4rem; }
 
 .section, .google-play, .contact-band, .cert-strip { padding: clamp(35px, 5vw, 66px) 0; border-top: 1px solid var(--line); }
 .section__heading { margin-bottom: 24px; }
@@ -174,7 +162,9 @@ footer { border-top: 1px solid var(--line); padding: 20px 0 28px; color: var(--m
   .topbar nav { order: 3; justify-content: flex-start; width: 100%; gap: 4px 14px; padding-top: 4px; }
   .topbar nav a { padding-block: 5px; font-size: .79rem; }
   .hero, .about, .focus, .google-play, .contact-band { grid-template-columns: 1fr; }
-  .hero::before { inset: 40% 0 0 18%; }
+  .hero { min-height: auto; gap: 40px; }
+  .puzzle-scene { height: 360px; }
+  .scene-loading { min-height: 360px; }
   .contact-actions { justify-content: flex-start; }
   [id] { scroll-margin-top: 130px; }
 }
