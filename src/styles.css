@@ -86,7 +86,7 @@ h2 { font-size: clamp(1.9rem, 4vw, 3rem); letter-spacing: -.045em; line-height: 
 .hero { min-height: 680px; grid-template-columns: .95fr 1.15fr; gap: 24px; padding-block: 48px 68px; }
 .hero h1 { font-size: clamp(3.2rem, 6.3vw, 5.7rem); }
 .hero-art { position: relative; min-width: 0; }
-.puzzle-scene { position: relative; height: 490px; isolation: isolate; }
+.puzzle-scene { position: relative; height: 490px; isolation: isolate; overflow: clip; }
 .puzzle-canvas { width: 100%; height: 100%; position: relative; z-index: 1; }
 .scene-orbit { position: absolute; inset: 6% 8%; border: 1px solid #4169e153; border-radius: 50%; transform: rotate(-28deg); background: radial-gradient(ellipse, #4169e125, transparent 67%); }
 .scene-orbit::before { content: ""; position: absolute; inset: 12% -12%; border: 1px solid #4169e12c; border-radius: 50%; transform: rotate(42deg); }
