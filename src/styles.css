@@ -22,7 +22,14 @@
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  background: radial-gradient(ellipse at 85% 12rem, #27395c55, transparent 40rem), var(--bg);
+  background:
+    radial-gradient(ellipse 72vw 620px at 100% 180px, #4169e15c, transparent 78%),
+    radial-gradient(ellipse 62vw 800px at -12% 18%, #4169e150, transparent 78%),
+    radial-gradient(ellipse 58vw 900px at 112% 32%, #ff914d45, transparent 78%),
+    radial-gradient(ellipse 75vw 800px at 0% 56%, #4169e14d, transparent 80%),
+    radial-gradient(ellipse 60vw 700px at 105% 73%, #ff914d38, transparent 80%),
+    radial-gradient(ellipse 85vw 650px at 25% 100%, #4169e15c, transparent 85%),
+    linear-gradient(165deg, #15171e 0%, #191b27 24%, #211c1b 42%, #171c2a 66%, #201b1a 82%, #151a29 100%);
 }
 body.modal-open { overflow: hidden; }
 a { color: inherit; text-decoration: none; }
@@ -112,6 +119,12 @@ h2 { font-size: clamp(1.9rem, 4vw, 3rem); letter-spacing: -.045em; line-height: 
 .project-card:hover { border-color: #6279be; }
 .project-card__media { position: relative; background: var(--panel-strong); }
 .project-card__media img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+#project-color-blast-match .project-card__media {
+  background: linear-gradient(135deg, #253d77, #171f38);
+}
+#project-color-blast-match .project-card__media img {
+  object-fit: contain;
+}
 .project-card__status { position: absolute; bottom: 10px; left: 10px; max-width: calc(100% - 20px); background: #17181b; border-left: 2px solid var(--orange); padding: 5px 8px; font-size: .74rem; font-weight: 650; }
 .project-card__body { flex: 1; display: flex; flex-direction: column; gap: 14px; padding: 18px; }
 .project-card h3 { font-size: 1.25rem; letter-spacing: -.02em; }

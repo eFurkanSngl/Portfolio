@@ -260,7 +260,7 @@ const projects = [
       tr: "Match puzzle prototipi. Level dengesi, görsel kalite, mobile game feel ve yayınlanabilir sistem akışı üzerinde aktif geliştirme sürüyor.",
       en: "A match puzzle prototype with active work on level balance, visual quality, mobile game feel and release-ready systems.",
     },
-    image: "Funny.png",
+    image: "ColorBlastMatch.webp",
     previewVideo: "ColorBlastMatchHero.mp4",
     video: "ColorBlastMatchHero.mp4",
     tags: ["Unity", "C#", "Match Puzzle", "Mobile"],
