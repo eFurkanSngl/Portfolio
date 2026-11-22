@@ -152,7 +152,7 @@ const copy = {
     ],
     aboutTitle: "I focus on taking mobile games from prototype to release quality.",
     aboutText:
-      "As a Junior Unity Game Developer, I work on gameplay systems, level logic, UI flow, object pooling, event-driven architecture and Android build preparation for mobile puzzle and casual games. I blended the CV experience with the existing projects so the portfolio reads like a product-focused profile.",
+      "I build the systems behind mobile puzzle games, from level logic and UI to object pooling and Android builds. For a US client, I took a spot-the-difference game from prototype to Google Play.",
     experienceTitle: "Experience",
     experience: [
       {
@@ -191,7 +191,7 @@ const copy = {
     gameCornerOpen: "Open full screen",
     projectsTitle: "Selected projects",
     projectsText:
-      "Mobile puzzle prototypes, client work, Unity Editor tooling and released game work blended with the technical experience from the CV.",
+      "Published games, gameplay prototypes and Unity Editor tools.",
     allFilter: "All",
     watchVideo: "Watch video",
     visitProject: "Visit project",
@@ -231,11 +231,11 @@ const projects = [
     title: "SGL Unity CI/CD",
     status: { tr: "Geliştiriliyor", en: "In Development" },
     description: {
-      tr: "Unity oyunları için GitHub Actions ve GameCI tabanlı açık kaynak, yeniden kullanılabilir CI/CD başlangıç altyapısı. EditMode testleri ve Android build otomasyonu tanımlandı; gerçek oyun entegrasyonu henüz doğrulanmadı.",
-      en: "Open-source reusable CI/CD starter for Unity games using GitHub Actions and GameCI. EditMode tests and Android build automation are configured; integration with a real game is not yet validated.",
+      tr: "SGL Games için Unity EditMode testlerini ve Android derlemesini GitHub Actions ile otomatikleştiren bir şablon geliştirdim. İmzalı AAB paketini Fastlane ile Google Play Internal Testing’e gönderen ayrı bir iş akışı yazdım. Canlı mağaza testi bekliyor. iOS için TestFlight dağıtımı planlanıyor.",
+      en: "I built a reusable GitHub Actions pipeline for SGL Games to run Unity EditMode tests and build Android games. A separate Fastlane workflow uploads a signed AAB to Google Play Internal Testing. A live store test is pending. TestFlight delivery for iOS is planned.",
     },
     image: "sgl-unity-cicd.svg",
-    tags: ["Unity", "GitHub Actions", "GameCI", "DevOps"],
+    tags: ["Unity", "GitHub Actions", "GameCI", "Fastlane"],
     category: "Tools",
     accent: "#f97316",
     github: "https://github.com/eFurkanSngl/SGL-Unity-CI-CD",
@@ -556,6 +556,8 @@ const projectOrder = [
   "ocean-blast",
 ];
 
+const carStack = projects.find((project) => project.id === "car-stack");
+
 function asset(name) {
   return `${import.meta.env.BASE_URL}${encodeURI(name)}`;
 }
@@ -567,6 +569,7 @@ function readmeLink(url) {
 function App() {
   const [lang, setLang] = useState("tr");
   const [activeFilter, setActiveFilter] = useState("All");
+  const [showWorkshop, setShowWorkshop] = useState(false);
   const [video, setVideo] = useState(null);
   const [pendingOpen, setPendingOpen] = useState(false);
   const [playIndex, setPlayIndex] = useState(0);
@@ -633,31 +636,44 @@ function App() {
 
       <section className="hero" id="top">
         <div className="hero__copy">
-          <p className="eyebrow"><span /> UNITY GAME DEVELOPER</p>
-          <h1>Enes Furkan<br />Şengül<span>.</span></h1>
+          <p className="hero-role">{lang === "tr" ? "Mobil oyun geliştiricisi" : "Mobile game developer"}</p>
+          <h1>Enes Furkan<br />Şengül</h1>
           <p className="hero__text">{lang === "tr"
-            ? "Unity ve C# ile mobil puzzle oyunları geliştiriyorum. Gameplay sistemleri, oyun hissi ve Android performansı üzerine çalışıyorum."
-            : "I build mobile puzzle games in Unity and C#, with a focus on gameplay systems, game feel, and Android performance."}</p>
+            ? "Unity ve C# ile bulmaca oyunları geliştiriyorum. Oyun tahtalarını, bölüm tasarım araçlarını ve Android derlemelerini hazırlayan otomasyonu yazıyorum."
+            : "I make puzzle games in Unity and C#. I build the boards players solve, the tools I use to design levels, and the pipeline that builds the Android games."}</p>
           <div className="hero__actions">
             <a className="button button--primary" href="#projects">{t.primaryCta} <span aria-hidden="true">↓</span></a>
+            <button type="button" className="workshop-switch" aria-pressed={showWorkshop} aria-controls="showcase" onClick={() => setShowWorkshop(!showWorkshop)}>
+              {showWorkshop ? "Car Stack" : (lang === "tr" ? "3D atölyeyi aç" : "Open 3D workshop")}
+            </button>
           </div>
         </div>
-        <div className="hero-art">
-          <Suspense fallback={<div className="scene-loading">PUZZLE LAB</div>}>
-            <WorkshopScene lang={lang} />
-          </Suspense>
-          <a className="hero-project-link" href="#project-car-stack" onClick={() => setActiveFilter("All")}>
-            <img src={asset("CarStack-Store-01.png")} alt="" />
-            <span><small>{lang === "tr" ? "YAYIMLANAN OYUN" : "PUBLISHED GAME"}</small><strong>Car Stack</strong></span>
-            <span aria-hidden="true">↗</span>
-          </a>
+        <div className="hero-art" id="showcase">
+          {showWorkshop ? (
+            <Suspense fallback={<div className="scene-loading">{lang === "tr" ? "Atölye yükleniyor…" : "Loading workshop…"}</div>}>
+              <WorkshopScene lang={lang} />
+            </Suspense>
+          ) : (
+            <div className="game-feature">
+              <div className="game-feature__copy">
+                <span>SGL Games</span>
+                <h2>Car<br />Stack</h2>
+                <p>{lang === "tr" ? "Aynı renkteki arabaları sırala, şeritleri boşalt." : "Line up cars by color to clear the lanes."}</p>
+                <button type="button" className="game-feature__play" onClick={() => {
+                  recordPortfolioEvent("video_open", { projectId: carStack.id, label: carStack.title });
+                  setVideo(carStack);
+                }}><Play size={16} aria-hidden="true" />{lang === "tr" ? "Oynanışı izle" : "Watch gameplay"}</button>
+                <a href="#project-car-stack" onClick={() => setActiveFilter("All")}>{lang === "tr" ? "Proje detayları" : "Project details"}</a>
+              </div>
+              <img src={asset("car-stack-preview.webp")} width="400" height="711" alt={lang === "tr" ? "Car Stack’in ilk bölümündeki renkli arabalar" : "Colorful cars on the first Car Stack board"} />
+            </div>
+          )}
         </div>
       </section>
 
       <section className="section section--projects" id="projects">
         <div className="section__heading">
           <div>
-            <span className="eyebrow">01 / {lang === "tr" ? "PROJELER" : "WORK"}</span>
             <h2>{t.projectsTitle}</h2>
             <p>{t.projectsText}</p>
           </div>
@@ -823,6 +839,9 @@ function App() {
               "Firebase Analytics",
               "Git",
               "Google Play Console",
+              "Unity CI/CD",
+              "GitHub Actions",
+              "GameCI",
             ].map((tool) => (
               <span key={tool}>{tool}</span>
             ))}
