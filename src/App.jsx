@@ -227,6 +227,21 @@ const copy = {
 
 const projects = [
   {
+    id: "sgl-unity-ci-cd",
+    title: "SGL Unity CI/CD",
+    status: { tr: "Geliştiriliyor", en: "In Development" },
+    description: {
+      tr: "Unity oyunları için GitHub Actions ve GameCI tabanlı açık kaynak, yeniden kullanılabilir CI/CD başlangıç altyapısı. EditMode testleri ve Android build otomasyonu tanımlandı; gerçek oyun entegrasyonu henüz doğrulanmadı.",
+      en: "Open-source reusable CI/CD starter for Unity games using GitHub Actions and GameCI. EditMode tests and Android build automation are configured; integration with a real game is not yet validated.",
+    },
+    image: "sgl-unity-cicd.svg",
+    tags: ["Unity", "GitHub Actions", "GameCI", "DevOps"],
+    category: "Tools",
+    accent: "#f97316",
+    github: "https://github.com/eFurkanSngl/SGL-Unity-CI-CD",
+  },
+
+  {
     id: "car-stack",
     title: "Car Stack",
     status: { tr: "Google Play'de", en: "Available on Google Play" },
@@ -524,6 +539,7 @@ const focusItems = [
 ];
 
 const projectOrder = [
+  "sgl-unity-ci-cd",
   "car-stack",
   "unity-level-generator",
   "color-blast-match",
