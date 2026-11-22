@@ -93,19 +93,6 @@ h2 { font-size: clamp(1.9rem, 4vw, 3rem); letter-spacing: -.045em; line-height: 
 .scene-fallback { position: absolute; inset: 40px 0; height: 80%; margin: auto; object-fit: contain; }
 .scene-loading { min-height: 490px; display: grid; place-items: center; color: var(--orange); }
 .workshop-switch { padding: 6px 4px; border: 0; background: transparent; color: var(--text); text-decoration: underline; text-underline-offset: 5px; }
-.game-feature {
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: center; gap: clamp(12px, 2vw, 26px); padding: clamp(20px, 3vw, 42px);
-  border-radius: 16px; background: #d9edce; color: #183c31;
-}
-.game-feature__copy { display: grid; justify-items: start; gap: 13px; }
-.game-feature__copy > span { font-weight: 650; font-size: .85rem; }
-.game-feature h2 { font-size: clamp(2.9rem, 5.4vw, 5.4rem); line-height: .88; letter-spacing: -.065em; }
-.game-feature p { max-width: 20ch; color: #345549; line-height: 1.4; }
-.game-feature__play { display: inline-flex; gap: 6px; align-items: center; min-height: 44px; padding: 8px 11px; background: #183c31; color: white; border: 0; border-radius: 5px; font-weight: 650; }
-.game-feature__copy a { text-decoration: underline; text-underline-offset: 4px; font-size: .85rem; }
-.game-feature img { width: 100%; height: auto; border-radius: 8px; box-shadow: 0 8px 16px #183c312a; }
-
 .section, .google-play, .contact-band, .cert-strip { padding: clamp(35px, 5vw, 66px) 0; border-top: 1px solid var(--line); }
 .section__heading { margin-bottom: 24px; }
 .section__heading h2 { margin-top: 8px; }
@@ -183,9 +170,6 @@ footer { border-top: 1px solid var(--line); padding: 20px 0 28px; color: var(--m
   [id] { scroll-margin-top: 130px; }
 }
 @media (max-width: 500px) {
-  .game-feature { gap: 12px; padding: 18px; }
-  .game-feature__copy { gap: 9px; }
-  .game-feature__play { font-size: .8rem; }
   .project-grid { grid-template-columns: 1fr; }
   .admin-columns { grid-template-columns: 1fr !important; }
 }

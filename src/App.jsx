@@ -12,6 +12,9 @@ import {
   Download,
   Eye,
   Gamepad2,
+  FlaskConical,
+  Package,
+  Upload,
   Github,
   Globe2,
   GraduationCap,
@@ -22,6 +25,9 @@ import {
   Mail,
   Monitor,
   Play,
+  Pause,
+  ArrowDown,
+  ArrowUpRight,
   RefreshCw,
   Rocket,
   ShieldCheck,
@@ -556,7 +562,10 @@ const projectOrder = [
   "ocean-blast",
 ];
 
-const carStack = projects.find((project) => project.id === "car-stack");
+const showcaseGames = [
+  { id: "car-stack", loop: "car-stack-loop.mp4", poster: "car-stack-preview.webp" },
+  { id: "color-blast-match", loop: "color-blast-loop.mp4", poster: "ColorBlastMatch.webp" },
+].map((game) => ({ ...game, project: projects.find((project) => project.id === game.id) }));
 
 function asset(name) {
   return `${import.meta.env.BASE_URL}${encodeURI(name)}`;
@@ -637,14 +646,14 @@ function App() {
       <section className="hero" id="top">
         <div className="hero__copy">
           <p className="hero-role">{lang === "tr" ? "Mobil oyun geliştiricisi" : "Mobile game developer"}</p>
-          <h1>Enes Furkan<br />Şengül</h1>
+          <h1><span>Enes Furkan</span> <span>Şengül</span></h1>
           <p className="hero__text">{lang === "tr"
             ? "Unity ve C# ile bulmaca oyunları geliştiriyorum. Oyun tahtalarını, bölüm tasarım araçlarını ve Android derlemelerini hazırlayan otomasyonu yazıyorum."
             : "I make puzzle games in Unity and C#. I build the boards players solve, the tools I use to design levels, and the pipeline that builds the Android games."}</p>
           <div className="hero__actions">
-            <a className="button button--primary" href="#projects">{t.primaryCta} <span aria-hidden="true">↓</span></a>
+            <a className="button button--primary" href="#projects">{t.primaryCta} <ArrowDown size={18} aria-hidden="true" /></a>
             <button type="button" className="workshop-switch" aria-pressed={showWorkshop} aria-controls="showcase" onClick={() => setShowWorkshop(!showWorkshop)}>
-              {showWorkshop ? "Car Stack" : (lang === "tr" ? "3D atölyeyi aç" : "Open 3D workshop")}
+              {showWorkshop ? (lang === "tr" ? "Oyunlara dön" : "Back to games") : (lang === "tr" ? "3D atölyeyi aç" : "Open 3D workshop")}
             </button>
           </div>
         </div>
@@ -654,19 +663,10 @@ function App() {
               <WorkshopScene lang={lang} />
             </Suspense>
           ) : (
-            <div className="game-feature">
-              <div className="game-feature__copy">
-                <span>SGL Games</span>
-                <h2>Car<br />Stack</h2>
-                <p>{lang === "tr" ? "Aynı renkteki arabaları sırala, şeritleri boşalt." : "Line up cars by color to clear the lanes."}</p>
-                <button type="button" className="game-feature__play" onClick={() => {
-                  recordPortfolioEvent("video_open", { projectId: carStack.id, label: carStack.title });
-                  setVideo(carStack);
-                }}><Play size={16} aria-hidden="true" />{lang === "tr" ? "Oynanışı izle" : "Watch gameplay"}</button>
-                <a href="#project-car-stack" onClick={() => setActiveFilter("All")}>{lang === "tr" ? "Proje detayları" : "Project details"}</a>
-              </div>
-              <img src={asset("car-stack-preview.webp")} width="400" height="711" alt={lang === "tr" ? "Car Stack’in ilk bölümündeki renkli arabalar" : "Colorful cars on the first Car Stack board"} />
-            </div>
+            <GameShowcase lang={lang} onDetails={() => setActiveFilter("All")} onWatch={(project) => {
+              recordPortfolioEvent("video_open", { projectId: project.id, label: project.title });
+              setVideo(project);
+            }} />
           )}
         </div>
       </section>
@@ -692,7 +692,7 @@ function App() {
           </div>
         </div>
 
-        <div className="project-grid">
+        <div className="project-grid" key={activeFilter}>
           {filteredProjects.map((project) => (
             <ProjectCard
               key={project.id}
@@ -737,7 +737,7 @@ function App() {
 
       <section className="google-play" id="google-play">
         <div className="google-play__media">
-          <img src={asset(activePlayProject.image)} alt={activePlayProject.title} />
+          <img key={activePlayProject.id || activePlayProject.title} src={asset(activePlayProject.image)} alt={activePlayProject.title} />
           <div className="store-badge">
             <Store size={18} />
             Google Play
@@ -906,6 +906,61 @@ function App() {
   );
 }
 
+function GameShowcase({ lang, onDetails, onWatch }) {
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const videoRef = useRef(null);
+  const stageRef = useRef(null);
+  const game = showcaseGames[index];
+  const tr = lang === "tr";
+
+  useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setPaused(preference.matches);
+    preference.addEventListener("change", sync);
+    return () => preference.removeEventListener("change", sync);
+  }, []);
+
+  useEffect(() => {
+    const clip = videoRef.current;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (paused || !entry.isIntersecting) clip.pause();
+      else clip.play().catch(() => { if (videoRef.current === clip && clip.paused) setPaused(true); });
+    });
+    observer.observe(stageRef.current);
+    return () => observer.disconnect();
+  }, [index, paused]);
+
+  return (
+    <div className={`reel reel--${game.id}`} ref={stageRef}>
+      <div className="reel__stage" key={game.id}>
+        <div className="reel__tracks" aria-hidden="true"><i /><i /><i /></div>
+        <div className="reel__device">
+          <video ref={videoRef} muted playsInline loop poster={asset(game.poster)} preload="none"
+            aria-label={tr ? `${game.project.title} oynanış önizlemesi` : `${game.project.title} gameplay preview`} src={asset(game.loop)} />
+        </div>
+        <div className="reel__caption" aria-live="polite">
+          <span>{game.project.status[lang]}</span>
+          <h2>{game.project.title}</h2>
+          <button type="button" onClick={() => onWatch(game.project)}><Play size={15} fill="currentColor" />{tr ? "Oynanışı izle" : "Watch gameplay"}</button>
+        </div>
+        <button className="reel__pause" type="button" onClick={() => setPaused(!paused)}
+          aria-label={paused ? (tr ? "Önizlemeyi oynat" : "Play preview") : (tr ? "Önizlemeyi duraklat" : "Pause preview")}>
+          {paused ? <Play size={17} /> : <Pause size={17} />}
+        </button>
+      </div>
+      <div className="reel__controls">
+        <div className="reel__picks" aria-label={tr ? "Oyun seçimi" : "Game selection"}>
+          {showcaseGames.map((entry, i) => <button key={entry.id} type="button" aria-pressed={i === index} onClick={() => setIndex(i)}>
+            <span aria-hidden="true" />{entry.project.title}
+          </button>)}
+        </div>
+        <a href={`#project-${game.id}`} onClick={onDetails} aria-label={tr ? `${game.project.title} proje detayları` : `${game.project.title} project details`}><ArrowUpRight size={23} /></a>
+      </div>
+    </div>
+  );
+}
+
 function Header({ onToggleLang, t }) {
   return (
     <header className="topbar">
@@ -934,6 +989,36 @@ function Header({ onToggleLang, t }) {
   );
 }
 
+function ReleaseDiagram({ lang }) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setVisible(true);
+        observer.disconnect();
+      }
+    }, { threshold: 0.35 });
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+  const steps = [
+    [FlaskConical, "EditMode", lang === "tr" ? "Unity testleri" : "Unity tests"],
+    [Package, "Android", lang === "tr" ? "AAB derlemesi" : "AAB build"],
+    [Upload, "Google Play", "Internal Testing"],
+  ];
+  return (
+    <ol ref={ref} className={`release-path${visible ? " in-view" : ""}`} aria-label={lang === "tr" ? "Android test dağıtımı" : "Android test distribution"}>
+      {steps.map(([Icon, title, detail], i) => (
+        <li key={title} style={{ "--step": i }}>
+          <span><Icon size={24} aria-hidden="true" /></span>
+          <strong>{title}</strong><small>{detail}</small>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 function ProjectCard({ lang, onOpenPending, onOpenVideo, onTrackEvent, project, t }) {
   const trackProjectClick = (label) => {
     onTrackEvent("project_click", { projectId: project.id, label });
@@ -942,7 +1027,9 @@ function ProjectCard({ lang, onOpenPending, onOpenVideo, onTrackEvent, project, 
   return (
     <article className="project-card" id={`project-${project.id}`}>
       <div className="project-card__media">
-        <img src={asset(project.image)} alt={project.title} loading="lazy" decoding="async" />
+        {project.id === "sgl-unity-ci-cd"
+          ? <ReleaseDiagram lang={lang} />
+          : <img src={asset(project.image)} alt={project.title} loading="lazy" decoding="async" />}
         <span className="project-card__status">{project.status[lang]}</span>
       </div>
       <div className="project-card__body">
